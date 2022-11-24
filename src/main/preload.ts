@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import Plant from '../renderer/utilities/Types';
 
-export type Channels = 'ipc-example';
+export type Channels = 'ipc-example' | 'jsonDB';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -16,6 +17,12 @@ contextBridge.exposeInMainWorld('electron', {
     },
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
+    },
+    readPlantJsonDB(filePath: string): void {
+      ipcRenderer.send('readPlantJsonDB', filePath);
+    },
+    appendPlantToDB(filePath: string, newPlant: Plant): void {
+      ipcRenderer.send('appendPlantToJsonDB', filePath, newPlant);
     },
   },
 });

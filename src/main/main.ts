@@ -12,6 +12,7 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import fs from 'fs';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -25,10 +26,51 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+// ipcMain.on('ipc-example', async (event, arg) => {
+//   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
+//   console.log(msgTemplate(arg));
+//   event.reply('ipc-example', msgTemplate('pong'));
+// });
+
+const emptyPlantDB = {
+  PlantDB: [],
+};
+
+ipcMain.on('readPlantJsonDB', async (event, filePath) => {
+  event.preventDefault();
+
+  let jsonData = {};
+  if (fs.existsSync(filePath)) {
+    console.log('--JSON database exist, reading...');
+    fs.readFile(filePath, (err, data) => {
+      if (err) throw err;
+      jsonData = data.toString();
+      console.log(jsonData);
+      event.reply('readPlantJsonDB', jsonData);
+    });
+  } else {
+    console.log('--cannot find JSON database, creating a new one...');
+
+    fs.writeFileSync(filePath, JSON.stringify(emptyPlantDB));
+    event.reply('readPlantJsonDB', emptyPlantDB);
+  }
+});
+
+ipcMain.on('appendPlantToJsonDB', async (event, filePath, newPlant) => {
+  event.preventDefault();
+  console.log(newPlant);
+  let plantDB;
+  if (fs.existsSync(filePath)) {
+    console.log('APPEND--JSON database exist, reading...');
+    fs.readFile(filePath, (err, data) => {
+      if (err) throw err;
+      const jsonData = JSON.parse(data.toString());
+      plantDB = jsonData.PlantDB;
+      plantDB.push(newPlant);
+    });
+  }
+  // return jsonData.toString();
+  event.reply('appendPlantToJsonDB', plantDB);
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -75,6 +117,7 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      nodeIntegration: true,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),

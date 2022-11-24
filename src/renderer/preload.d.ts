@@ -1,4 +1,5 @@
 import { Channels } from 'main/preload';
+import Plant from './utilities/Types';
 
 declare global {
   interface Window {
@@ -10,6 +11,8 @@ declare global {
           func: (...args: unknown[]) => void
         ): (() => void) | undefined;
         once(channel: string, func: (...args: unknown[]) => void): void;
+        readPlantJsonDB(filePath: string): string;
+        appendPlantToDB(filePath: string, newPlant: Plant): void;
       };
     };
   }

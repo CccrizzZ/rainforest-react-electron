@@ -1,15 +1,45 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import Button from '@mui/material/Button';
-import icon from '../../assets/icon.svg';
+import { useState } from 'react';
+import { BottomNavigationAction, BottomNavigation } from '@mui/material';
+import { Forest, AccountBalance, Warehouse } from '@mui/icons-material';
+import InventoryManager from './components/InventoryManager';
+import TimeBar from './components/TimeBar';
+import GrowRoomManager from './components/GrowRoomManager';
+import LedgerBook from './components/LedgerBook';
 import './App.css';
 
 const Hub = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const renderHub = (): JSX.Element => {
+    switch (currentPage) {
+      case 0:
+        return <InventoryManager />;
+      case 1:
+        return <GrowRoomManager />;
+      case 2:
+        return <LedgerBook />;
+      default:
+        return <h1>404</h1>;
+    }
+  };
+
   return (
-    <div>
-      <div className="Hello">
-        <img width="200" alt="icon" src={icon} />
-      </div>
-      <Button>Close</Button>
+    <div className="hub">
+      <TimeBar />
+      <div className="overlay">{renderHub()}</div>
+      <BottomNavigation
+        className="navigation"
+        showLabels
+        value={currentPage}
+        onChange={(event, newValue) => {
+          event.preventDefault();
+          setCurrentPage(newValue);
+        }}
+      >
+        <BottomNavigationAction label="InventoryManager" icon={<Warehouse />} />
+        <BottomNavigationAction label="GrowRoomManager" icon={<Forest />} />
+        <BottomNavigationAction label="LedgerBook" icon={<AccountBalance />} />
+      </BottomNavigation>
     </div>
   );
 };

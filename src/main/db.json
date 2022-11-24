@@ -1,0 +1,22 @@
+{
+  "PlantDB": [
+    {
+      "name": "OG Banana Milkshake",
+      "dominant": "hybrid",
+      "amount": 100,
+      "thc": 25,
+      "cbd": 1,
+      "plantDate": "1431011162",
+      "stage": "vegetation"
+    },
+    {
+      "name": "OG Kush",
+      "dominant": "hybrid",
+      "amount": 100,
+      "thc": 25,
+      "cbd": 1,
+      "plantDate": "1431011162",
+      "stage": "vegetation"
+    }
+  ]
+}

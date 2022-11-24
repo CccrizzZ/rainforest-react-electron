@@ -1,62 +1,62 @@
-/*
- * @NOTE: Prepend a `~` to css file paths that are in your node_modules
- *        See https://github.com/webpack-contrib/sass-loader#imports
- */
 body {
   position: relative;
   color: white;
   height: 100vh;
+  /* background: linear-gradient(200.96deg,
+      #0026ff -29.09%,
+      #ff4800 51.77%,
+      #ff009d 129.35%); */
   background: linear-gradient(
-    200.96deg,
-    #00ff0d -29.09%,
-    #dd5789 51.77%,
-    #7a2c9e 129.35%
+    325deg,
+    hsl(21deg 100% 47%) 0%,
+    hsl(353deg 58% 62%) 10%,
+    hsl(321deg 33% 59%) 20%,
+    hsl(259deg 37% 64%) 30%,
+    hsl(223deg 69% 66%) 40%,
+    hsl(204deg 100% 50%) 50%,
+    hsl(194deg 100% 46%) 60%,
+    hsl(182deg 100% 41%) 70%,
+    hsl(169deg 100% 43%) 80%,
+    hsl(156deg 100% 47%) 90%,
+    hsl(143deg 100% 50%) 100%
   );
-  font-family: sans-serif;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   overflow-y: hidden;
-  display: flex;
   justify-content: center;
   align-items: center;
+  min-width: 1000px;
+  margin: 0;
 }
 
-button {
-  background-color: white;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: none;
-  appearance: none;
-  font-size: 1.3rem;
-  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
-    0px 18px 88px -4px rgba(24, 39, 75, 0.14);
-  transition: all ease-in 0.1s;
-  cursor: pointer;
-  opacity: 0.9;
+.desktopApps {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
-button:hover {
-  transform: scale(1.05);
-  opacity: 1;
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
-li {
-  list-style: none;
+.overlay::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
 }
 
-a {
-  text-decoration: none;
-  height: fit-content;
-  width: fit-content;
-  margin: 10px;
-}
-
-a:hover {
-  opacity: 1;
-  text-decoration: none;
-}
-
-.Hello {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px 0;
+.navigation {
+  display: static;
+  margin: auto;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
 }

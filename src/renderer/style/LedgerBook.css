@@ -1,0 +1,10 @@
+.LedgerBook {
+  background-color: white;
+  min-width: 400px;
+  min-height: 500px;
+  max-width: 600px;
+  color: black;
+  border-radius: 5px;
+  margin: auto;
+  position: absolute;
+}
