@@ -1,8 +1,9 @@
-import { AppBar } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { AppBar, IconButton } from '@mui/material';
+import { Circle } from '@mui/icons-material';
 import spacetime from 'spacetime';
 import { setInterval } from 'timers';
-import '../style/DraggableWindow.css';
+import '../style/TimeBar.css';
 
 const TimeBar = () => {
   const [currentTime, setCurrentTime] = useState(spacetime.now());
@@ -10,7 +11,6 @@ const TimeBar = () => {
   useEffect(() => {
     setInterval(() => {
       setCurrentTime(spacetime.now());
-      console.log('1 minute passed');
     }, 60000);
   }, []);
 
@@ -20,8 +20,31 @@ const TimeBar = () => {
     return `${currentTime.monthName().toUpperCase()} ${currentTime.date()}`;
   };
 
+  const closeWindow = (): void => {
+    window.electron.ipcRenderer.shutDownSystem();
+  };
+
+  const minimizeWindow = (): void => {
+    console.log('minimize window');
+  };
+
+  const maximizeWindow = (): void => {
+    console.log('maximize window');
+  };
+
   return (
-    <div className="TimeBar">
+    <div className="timeBar">
+      <div className="buttonGroup">
+        <IconButton color="error" size="small" onClick={closeWindow}>
+          <Circle />
+        </IconButton>
+        <IconButton color="warning" size="small" onClick={minimizeWindow}>
+          <Circle />
+        </IconButton>
+        <IconButton color="success" size="small" onClick={maximizeWindow}>
+          <Circle />
+        </IconButton>
+      </div>
       <AppBar
         position="static"
         style={{
@@ -30,8 +53,10 @@ const TimeBar = () => {
           color: '#ff7b00',
         }}
       >
-        <h4 style={{ margin: 'auto', right: '0' }}>{currentTime.time()}</h4>
-        <h4 style={{ margin: 'auto' }}>{getDate()}</h4>
+        <div className="clock">
+          <h4>{currentTime.time()}</h4>
+          <h4>{getDate()}</h4>
+        </div>
       </AppBar>
     </div>
   );

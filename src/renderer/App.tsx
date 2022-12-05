@@ -1,7 +1,13 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
-import { BottomNavigationAction, BottomNavigation } from '@mui/material';
-import { Forest, AccountBalance, Warehouse } from '@mui/icons-material';
+import {
+  BottomNavigationAction,
+  BottomNavigation,
+  IconButton,
+  AppBar,
+  Drawer,
+} from '@mui/material';
+import { Forest, AccountBalance, Warehouse, Air } from '@mui/icons-material';
 import InventoryManager from './components/InventoryManager';
 import TimeBar from './components/TimeBar';
 import GrowRoomManager from './components/GrowRoomManager';
@@ -10,6 +16,9 @@ import './App.css';
 
 const Hub = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // renders components according to navigation selection
   const renderHub = (): JSX.Element => {
     switch (currentPage) {
       case 0:
@@ -23,11 +32,29 @@ const Hub = () => {
     }
   };
 
+  const openDrawer = (): void => {
+    setDrawerOpen(true);
+  };
+
   return (
     <div className="hub">
       <TimeBar />
+      <Drawer
+        className="drawerMenu"
+        anchor="bottom"
+        open={drawerOpen}
+        style={{
+          width: '50%',
+        }}
+      >
+        <h1>Item 1</h1>
+        <h1>Item 1</h1>
+        <h1>Item 1</h1>
+        <h1>Item 1</h1>
+        <h1>Item 1</h1>
+      </Drawer>
       <div className="overlay">{renderHub()}</div>
-      <BottomNavigation
+      {/* <BottomNavigation
         className="navigation"
         showLabels
         value={currentPage}
@@ -39,7 +66,26 @@ const Hub = () => {
         <BottomNavigationAction label="InventoryManager" icon={<Warehouse />} />
         <BottomNavigationAction label="GrowRoomManager" icon={<Forest />} />
         <BottomNavigationAction label="LedgerBook" icon={<AccountBalance />} />
-      </BottomNavigation>
+      </BottomNavigation> */}
+      <AppBar
+        position="static"
+        style={{
+          backgroundColor: '#505050',
+          overflow: 'hidden',
+          position: 'fixed',
+          bottom: '0',
+          padding: '0',
+          height: '50px',
+        }}
+      >
+        <IconButton
+          className="drawerButton"
+          onClick={openDrawer}
+          color="success"
+        >
+          <Air />
+        </IconButton>
+      </AppBar>
     </div>
   );
 };

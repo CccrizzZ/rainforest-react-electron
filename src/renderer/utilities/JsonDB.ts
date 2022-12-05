@@ -6,7 +6,7 @@ const readPlantDB = (filePath: string): void => {
   window.electron.ipcRenderer.readPlantJsonDB(filePath);
 };
 
-// append a plant object to json file
+// append a plant object to database json file
 const appendPlantToDB = (filePath: string, newPlant: Plant): void => {
   window.electron.ipcRenderer.appendPlantToDB(filePath, newPlant);
 };

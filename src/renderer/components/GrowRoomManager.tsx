@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Grid, Chip } from '@mui/material';
+import { Grid, Chip, Fab } from '@mui/material';
+import { AddCircle } from '@mui/icons-material';
 import spacetime from 'spacetime';
 import { readPlantDB, appendPlantToDB } from '../utilities/JsonDB';
 // fiximport
@@ -84,11 +85,12 @@ const examplePlant = {
 };
 
 const GrowRoomManager = () => {
+  // an object contains all plants information
   const [allBatches, setAllBatches] = useState(plantData);
 
   useEffect(() => {
     readPlantDB('./db.json');
-    appendPlantToDB('./db.json', examplePlant);
+    // appendPlantToDB('./db.json', examplePlant);
 
     // receive all plants data
     window.electron.ipcRenderer.on('readPlantJsonDB', (arg) => {
@@ -98,7 +100,7 @@ const GrowRoomManager = () => {
 
     // receive append result
     window.electron.ipcRenderer.on('appendPlantToJsonDB', (arg) => {
-      // console.log(arg);
+      console.log(arg);
     });
   }, []);
 
@@ -106,9 +108,9 @@ const GrowRoomManager = () => {
   // will return all plants if no stage passed in
   const getPlants = (
     stage: 'germination' | 'vegetation' | 'flowering' | 'harvested' | undefined
-  ) => {
+  ): JSX.Element[] | null | React.ReactElement => {
     if (stage === undefined) {
-      return allBatches;
+      return null;
     }
     const germinationBatches: Plant[] = [];
     const vegetationBatches: Plant[] = [];
@@ -156,20 +158,28 @@ const GrowRoomManager = () => {
     }
   };
 
-  const togglePlantUpdationPopup = () => {
+  const togglePlantUpdationPopup = (): void => {
     // setShowPlantPopUp(!showPlantPopUp);
   };
 
   return (
     <div className="growRoomManager unselectable">
       <div className="header">
-        <h1>Growth Tracker</h1>
+        {/* <h1>Growth Tracker</h1> */}
+        <Fab color="primary" aria-label="add">
+          <AddCircle />
+        </Fab>
         <Chip
           className="addPlantButton"
           label="New Plant"
           color="success"
           onClick={togglePlantUpdationPopup}
-          style={{ margin: 'auto', display: 'flex', width: '200px' }}
+          style={{
+            margin: 'auto',
+            display: 'flex',
+            width: '200px',
+            marginTop: '10px',
+          }}
         />
       </div>
       <div className="content">

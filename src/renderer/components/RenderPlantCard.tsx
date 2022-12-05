@@ -1,13 +1,11 @@
-import { Button } from '@mui/material';
 import Plant from '../utilities/Types';
-import PlantUpdationPopup from './PlantUpdationPopup';
 import '../style/PlantCard.css';
 
 // plant card component for a single plant
 const RenderPlantCards = (plant: Plant, key: number) => {
+  const { name, dominant, amount, thc, cbd, stage } = plant;
   const borderColorNormal = '#000';
   const borderColorHovered = '#ff7b00';
-  const { name, dominant, amount, thc, cbd, stage } = plant;
 
   const mouseEnterHandler = (event: React.MouseEvent<HTMLDivElement>) => {
     event.currentTarget.style.borderColor = borderColorHovered;

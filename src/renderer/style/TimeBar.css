@@ -1,0 +1,29 @@
+.timeBar {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-app-region: drag;
+  z-index: -10;
+}
+
+.clock {
+  margin: 0 auto;
+  right: 0;
+}
+
+.clock > h4 {
+  margin: auto;
+}
+
+.buttonGroup {
+  position: fixed;
+  display: inline;
+  -webkit-app-region: no-drag;
+  z-index: 1;
+  margin-top: 15px;
+  margin-left: 10px;
+}
+
+.buttonGroup > * {
+  padding: 5px;
+}

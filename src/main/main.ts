@@ -36,26 +36,32 @@ const emptyPlantDB = {
   PlantDB: [],
 };
 
+ipcMain.on('shutDownSystem', () => {
+  app.quit();
+});
+
+// read plants data from local json file
 ipcMain.on('readPlantJsonDB', async (event, filePath) => {
   event.preventDefault();
-
   let jsonData = {};
   if (fs.existsSync(filePath)) {
+    // reads the json file if it exist
     console.log('--JSON database exist, reading...');
     fs.readFile(filePath, (err, data) => {
       if (err) throw err;
       jsonData = data.toString();
-      console.log(jsonData);
+      console.log(`JSON Data: ${jsonData}`);
       event.reply('readPlantJsonDB', jsonData);
     });
   } else {
+    // create a new json file if db not exist
     console.log('--cannot find JSON database, creating a new one...');
-
     fs.writeFileSync(filePath, JSON.stringify(emptyPlantDB));
     event.reply('readPlantJsonDB', emptyPlantDB);
   }
 });
 
+// add plants data to local json file
 ipcMain.on('appendPlantToJsonDB', async (event, filePath, newPlant) => {
   event.preventDefault();
   console.log(newPlant);
@@ -122,7 +128,7 @@ const createWindow = async () => {
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
-    frame: true,
+    frame: false,
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -143,7 +149,7 @@ const createWindow = async () => {
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  // menuBuilder.buildMenu();
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
