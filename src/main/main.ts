@@ -13,8 +13,8 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import fs from 'fs';
-import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import MongoDBConnector from '../renderer/utilities/MongoDBConnector';
 
 class AppUpdater {
   constructor() {
@@ -32,12 +32,34 @@ let mainWindow: BrowserWindow | null = null;
 //   event.reply('ipc-example', msgTemplate('pong'));
 // });
 
+const Mongo = new MongoDBConnector();
+
 const emptyPlantDB = {
   PlantDB: [],
 };
 
+// red button
 ipcMain.on('shutDownSystem', () => {
   app.quit();
+});
+
+// yellow button
+ipcMain.on('minimizeWindow', () => {
+  mainWindow?.minimize();
+});
+
+// green button
+ipcMain.on('toggleMaximizeWindow', () => {
+  if (mainWindow?.isMaximized()) {
+    mainWindow.unmaximize();
+  } else {
+    mainWindow?.maximize();
+  }
+});
+
+ipcMain.on('connectMongoDB', () => {
+  console.log(process.env.REACT_APP_MONGO_DB_CONN);
+  Mongo.connectDB(process.env.REACT_APP_MONGO_DB_CONN);
 });
 
 // read plants data from local json file
@@ -119,8 +141,8 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: 1600,
+    height: 1000,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
@@ -147,9 +169,6 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-
-  const menuBuilder = new MenuBuilder(mainWindow);
-  // menuBuilder.buildMenu();
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {

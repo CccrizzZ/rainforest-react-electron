@@ -9,6 +9,10 @@ const TimeBar = () => {
   const [currentTime, setCurrentTime] = useState(spacetime.now());
 
   useEffect(() => {
+    // connect to mongodb
+    window.electron.ipcRenderer.connectMongoDB();
+
+    // start updating time
     setInterval(() => {
       setCurrentTime(spacetime.now());
     }, 60000);
@@ -25,11 +29,11 @@ const TimeBar = () => {
   };
 
   const minimizeWindow = (): void => {
-    console.log('minimize window');
+    window.electron.ipcRenderer.minimizeWindow();
   };
 
   const maximizeWindow = (): void => {
-    console.log('maximize window');
+    window.electron.ipcRenderer.toggleMaximizeWindow();
   };
 
   return (

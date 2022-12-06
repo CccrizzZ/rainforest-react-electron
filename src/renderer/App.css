@@ -38,6 +38,7 @@ body {
   align-items: center;
   min-width: 1000px;
   margin: 0;
+  border-radius: 2em;
 }
 
 @keyframes gradient {

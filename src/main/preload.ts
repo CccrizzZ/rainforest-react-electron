@@ -27,5 +27,14 @@ contextBridge.exposeInMainWorld('electron', {
     shutDownSystem(): void {
       ipcRenderer.send('shutDownSystem');
     },
+    toggleMaximizeWindow(): void {
+      ipcRenderer.send('toggleMaximizeWindow');
+    },
+    minimizeWindow(): void {
+      ipcRenderer.send('minimizeWindow');
+    },
+    connectMongoDB(): void {
+      ipcRenderer.send('connectMongoDB');
+    },
   },
 });

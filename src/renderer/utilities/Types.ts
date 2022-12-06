@@ -1,13 +1,13 @@
 import * as spacetime from 'spacetime';
 
-type Plant = {
+interface Plant {
   name: string;
-  dominant: string | 'sativa' | 'indica' | 'hybrid';
+  dominant: string;
   amount: number;
   thc: number;
   cbd: number;
   plantDate: spacetime.Spacetime | string;
-  stage: string | 'germination' | 'vegetation' | 'flowering' | 'harvested';
-};
+  stage: string;
+}
 
 export default Plant;
