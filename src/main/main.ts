@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import fs from 'fs';
 import { resolveHtmlPath } from './util';
+import Plant from '../renderer/utilities/Types';
 import MongoDBConnector from '../renderer/utilities/MongoDBConnector';
 
 class AppUpdater {
@@ -34,9 +35,7 @@ let mainWindow: BrowserWindow | null = null;
 
 const Mongo = new MongoDBConnector();
 
-const emptyPlantDB = {
-  PlantDB: [],
-};
+const emptyPlantDB = {};
 
 // red button
 ipcMain.on('shutDownSystem', () => {
@@ -57,17 +56,19 @@ ipcMain.on('toggleMaximizeWindow', () => {
   }
 });
 
+// connect to mongo db
 ipcMain.on('connectMongoDB', () => {
-  console.log(process.env.REACT_APP_MONGO_DB_CONN);
-  Mongo.connectDB(process.env.REACT_APP_MONGO_DB_CONN);
+  // console.log(process.env.REACT_APP_MONGO_DB_CONN);
+  // Mongo.connectDB(process.env.REACT_APP_MONGO_DB_CONN);
 });
 
 // read plants data from local json file
 ipcMain.on('readPlantJsonDB', async (event, filePath) => {
   event.preventDefault();
   let jsonData = {};
+
+  // reads the json file if it exist
   if (fs.existsSync(filePath)) {
-    // reads the json file if it exist
     console.log('--JSON database exist, reading...');
     fs.readFile(filePath, (err, data) => {
       if (err) throw err;
@@ -78,28 +79,36 @@ ipcMain.on('readPlantJsonDB', async (event, filePath) => {
   } else {
     // create a new json file if db not exist
     console.log('--cannot find JSON database, creating a new one...');
-    fs.writeFileSync(filePath, JSON.stringify(emptyPlantDB));
-    event.reply('readPlantJsonDB', emptyPlantDB);
+    fs.writeFileSync(filePath, '[]');
+    event.reply('readPlantJsonDB', JSON.stringify([]));
   }
 });
 
-// add plants data to local json file
-ipcMain.on('appendPlantToJsonDB', async (event, filePath, newPlant) => {
-  event.preventDefault();
-  console.log(newPlant);
-  let plantDB;
-  if (fs.existsSync(filePath)) {
-    console.log('APPEND--JSON database exist, reading...');
-    fs.readFile(filePath, (err, data) => {
-      if (err) throw err;
-      const jsonData = JSON.parse(data.toString());
-      plantDB = jsonData.PlantDB;
-      plantDB.push(newPlant);
-    });
+// append plants data to local json file
+ipcMain.on(
+  'appendPlantToJsonDB',
+  async (event, filePath: string, newPlant: Plant) => {
+    event.preventDefault();
+    console.log(newPlant);
+
+    if (fs.existsSync(filePath)) {
+      console.log('APPEND, reading...');
+
+      // read and append
+      fs.readFile(filePath, (err, data) => {
+        if (err) throw err;
+        const jsonData = JSON.parse(data.toString());
+        jsonData.push(newPlant);
+        console.log(JSON.stringify(jsonData));
+
+        fs.writeFileSync(filePath, JSON.stringify(jsonData));
+        event.reply('appendPlantToJsonDB', JSON.stringify(jsonData));
+      });
+    } else {
+      event.reply('appendPlantToJsonDB', 'cannot find file');
+    }
   }
-  // return jsonData.toString();
-  event.reply('appendPlantToJsonDB', plantDB);
-});
+);
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

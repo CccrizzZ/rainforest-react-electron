@@ -8,72 +8,6 @@ import Plant from '../utilities/Types';
 import RenderPlantCards from './RenderPlantCard';
 import '../style/GrowRoomManager.css';
 
-const plantData = [
-  {
-    name: 'OG Banana Milkshake',
-    dominant: 'hybrid',
-    amount: 100,
-    thc: 25,
-    cbd: 1,
-    plantDate: spacetime.now(),
-    stage: 'vegetation',
-  },
-  {
-    name: 'OG Kush',
-    dominant: 'hybrid',
-    amount: 100,
-    thc: 25,
-    cbd: 1,
-    plantDate: spacetime.now(),
-    stage: 'vegetation',
-  },
-  {
-    name: 'LSD 25',
-    dominant: 'indica',
-    amount: 100,
-    thc: 27,
-    cbd: 1,
-    plantDate: spacetime.now(),
-    stage: 'vegetation',
-  },
-  {
-    name: 'Green Crack',
-    dominant: 'hybrid',
-    amount: 100,
-    thc: 25,
-    cbd: 1,
-    plantDate: spacetime.now(),
-    stage: 'vegetation',
-  },
-  {
-    name: 'Green Crack',
-    dominant: 'hybrid',
-    amount: 100,
-    thc: 25,
-    cbd: 1,
-    plantDate: spacetime.now(),
-    stage: 'vegetation',
-  },
-  {
-    name: 'Green Crack',
-    dominant: 'hybrid',
-    amount: 100,
-    thc: 25,
-    cbd: 1,
-    plantDate: spacetime.now(),
-    stage: 'vegetation',
-  },
-  {
-    name: 'Blackberry Auto',
-    dominant: 'indica',
-    amount: 5,
-    thc: 25,
-    cbd: 1,
-    plantDate: spacetime.now(),
-    stage: 'flowering',
-  },
-];
-
 const examplePlant = {
   name: 'EXAMPLE',
   dominant: 'hybrid',
@@ -84,23 +18,32 @@ const examplePlant = {
   stage: 'vegetation',
 };
 
+const plant: Plant[] = [];
+
 const GrowRoomManager = () => {
   // an object contains all plants information
-  const [allBatches, setAllBatches] = useState(plantData);
+  const [allBatches, setAllBatches] = useState(plant);
+  const readDB = () => {
+    readPlantDB('./db.json');
+  };
 
   useEffect(() => {
-    readPlantDB('./db.json');
-    // appendPlantToDB('./db.json', examplePlant);
+    // read json db first
+    readDB();
 
     // receive all plants data
     window.electron.ipcRenderer.on('readPlantJsonDB', (arg) => {
       const db = JSON.parse(arg as string);
-      setAllBatches(db.PlantDB);
+      setAllBatches(db);
     });
 
     // receive append result
     window.electron.ipcRenderer.on('appendPlantToJsonDB', (arg) => {
-      console.log(arg);
+      if (arg === 'cannot find file') {
+        alert('cannot find json.db');
+      } else {
+        readDB();
+      }
     });
   }, []);
 
@@ -109,14 +52,18 @@ const GrowRoomManager = () => {
   const getPlants = (
     stage: 'germination' | 'vegetation' | 'flowering' | 'harvested' | undefined
   ): JSX.Element[] | null | React.ReactElement => {
-    if (stage === undefined) {
+    // check if stage is undefined or allBatches is empty
+    if (stage === undefined || allBatches.forEach === undefined) {
       return null;
     }
+
+    // all stages array
     const germinationBatches: Plant[] = [];
     const vegetationBatches: Plant[] = [];
     const floweringBatches: Plant[] = [];
     const harvestedBatches: Plant[] = [];
 
+    // allocate plants into stage
     allBatches.forEach((batch) => {
       switch (batch.stage) {
         case 'germination':
@@ -160,6 +107,7 @@ const GrowRoomManager = () => {
 
   const togglePlantUpdationPopup = (): void => {
     // setShowPlantPopUp(!showPlantPopUp);
+    appendPlantToDB('./db.json', examplePlant);
   };
 
   return (
@@ -171,7 +119,7 @@ const GrowRoomManager = () => {
         </Fab>
         <Chip
           className="addPlantButton"
-          label="New Plant"
+          label="Add New Plant"
           color="success"
           onClick={togglePlantUpdationPopup}
           style={{
