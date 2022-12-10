@@ -15,8 +15,7 @@ import LedgerBook from './components/LedgerBook';
 import './App.css';
 
 const Hub = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(2);
 
   // renders components according to navigation selection
   const renderHub = (): JSX.Element => {
@@ -32,31 +31,12 @@ const Hub = () => {
     }
   };
 
-  const openDrawer = (): void => {
-    setDrawerOpen(true);
-  };
-
   return (
     <div className="hub">
       <TimeBar />
-      <Drawer
-        className="drawerMenu"
-        anchor="bottom"
-        open={drawerOpen}
-        style={{
-          width: '50%',
-        }}
-      >
-        <h1>Item 1</h1>
-        <h1>Item 1</h1>
-        <h1>Item 1</h1>
-        <h1>Item 1</h1>
-        <h1>Item 1</h1>
-      </Drawer>
       <div className="overlay">{renderHub()}</div>
-      {/* <BottomNavigation
+      <BottomNavigation
         className="navigation"
-        showLabels
         value={currentPage}
         onChange={(event, newValue) => {
           event.preventDefault();
@@ -66,26 +46,7 @@ const Hub = () => {
         <BottomNavigationAction label="InventoryManager" icon={<Warehouse />} />
         <BottomNavigationAction label="GrowRoomManager" icon={<Forest />} />
         <BottomNavigationAction label="LedgerBook" icon={<AccountBalance />} />
-      </BottomNavigation> */}
-      <AppBar
-        position="static"
-        style={{
-          backgroundColor: '#505050',
-          overflow: 'hidden',
-          position: 'fixed',
-          bottom: '0',
-          padding: '0',
-          height: '50px',
-        }}
-      >
-        <IconButton
-          className="drawerButton"
-          onClick={openDrawer}
-          color="success"
-        >
-          <Air />
-        </IconButton>
-      </AppBar>
+      </BottomNavigation>
     </div>
   );
 };

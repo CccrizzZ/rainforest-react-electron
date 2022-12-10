@@ -10,4 +10,10 @@ interface Plant {
   stage: string;
 }
 
-export default Plant;
+type Item = {
+  name: string;
+  cost: number;
+  quantity: number;
+};
+
+export { Plant, Item };

@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Grid, Chip, Fab } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
-import spacetime from 'spacetime';
-import { readPlantDB, appendPlantToDB } from '../utilities/JsonDB';
-// fiximport
-import Plant from '../utilities/Types';
+import JsonDBConnector from '../utilities/JsonDB';
+import { Plant } from '../utilities/Types';
 import RenderPlantCards from './RenderPlantCard';
 import '../style/GrowRoomManager.css';
 
@@ -21,16 +19,11 @@ const examplePlant = {
 const plant: Plant[] = [];
 
 const GrowRoomManager = () => {
-  // an object contains all plants information
+  // all plants information
   const [allBatches, setAllBatches] = useState(plant);
-  const readDB = () => {
-    readPlantDB('./db.json');
-  };
+  const [jsonConnector] = useState(new JsonDBConnector('./db.json'));
 
   useEffect(() => {
-    // read json db first
-    readDB();
-
     // receive all plants data
     window.electron.ipcRenderer.on('readPlantJsonDB', (arg) => {
       const db = JSON.parse(arg as string);
@@ -42,10 +35,14 @@ const GrowRoomManager = () => {
       if (arg === 'cannot find file') {
         alert('cannot find json.db');
       } else {
-        readDB();
+        jsonConnector.readPlantDB();
       }
     });
-  }, []);
+
+    // read json db first
+    // setJsonConnector(new JsonDBConnector('./db.json'));
+    jsonConnector.readPlantDB();
+  }, [jsonConnector]);
 
   // gets all plats data at selected stage
   // will return all plants if no stage passed in
@@ -107,28 +104,23 @@ const GrowRoomManager = () => {
 
   const togglePlantUpdationPopup = (): void => {
     // setShowPlantPopUp(!showPlantPopUp);
-    appendPlantToDB('./db.json', examplePlant);
+    jsonConnector.appendPlantToDB(examplePlant);
   };
 
   return (
-    <div className="growRoomManager unselectable">
-      <div className="header">
-        {/* <h1>Growth Tracker</h1> */}
-        <Fab color="primary" aria-label="add">
-          <AddCircle />
-        </Fab>
-        <Chip
-          className="addPlantButton"
-          label="Add New Plant"
-          color="success"
+    <div className="growRoomManager unselectable componentWindow">
+      <div className="header" style={{ paddingTop: '30px' }}>
+        <Fab
           onClick={togglePlantUpdationPopup}
+          color="success"
+          aria-label="add"
           style={{
             margin: 'auto',
             display: 'flex',
-            width: '200px',
-            marginTop: '10px',
           }}
-        />
+        >
+          <AddCircle />
+        </Fab>
       </div>
       <div className="content">
         <Grid container>
@@ -152,8 +144,6 @@ const GrowRoomManager = () => {
       </div>
     </div>
   );
-
-  // return render;
 };
 
 export default GrowRoomManager;

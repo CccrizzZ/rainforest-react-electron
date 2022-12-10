@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import Plant from '../renderer/utilities/Types';
+import { Plant } from '../renderer/utilities/Types';
 
 export type Channels = 'ipc-example' | 'jsonDB';
 

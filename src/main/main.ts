@@ -14,7 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import fs from 'fs';
 import { resolveHtmlPath } from './util';
-import Plant from '../renderer/utilities/Types';
+import { Plant } from '../renderer/utilities/Types';
 import MongoDBConnector from '../renderer/utilities/MongoDBConnector';
 
 class AppUpdater {
@@ -26,16 +26,6 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-// ipcMain.on('ipc-example', async (event, arg) => {
-//   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-//   console.log(msgTemplate(arg));
-//   event.reply('ipc-example', msgTemplate('pong'));
-// });
-
-const Mongo = new MongoDBConnector();
-
-const emptyPlantDB = {};
 
 // red button
 ipcMain.on('shutDownSystem', () => {
@@ -91,16 +81,14 @@ ipcMain.on(
     event.preventDefault();
     console.log(newPlant);
 
+    // read and append
     if (fs.existsSync(filePath)) {
-      console.log('APPEND, reading...');
-
-      // read and append
       fs.readFile(filePath, (err, data) => {
         if (err) throw err;
         const jsonData = JSON.parse(data.toString());
         jsonData.push(newPlant);
-        console.log(JSON.stringify(jsonData));
 
+        // write the updated db to json file
         fs.writeFileSync(filePath, JSON.stringify(jsonData));
         event.reply('appendPlantToJsonDB', JSON.stringify(jsonData));
       });

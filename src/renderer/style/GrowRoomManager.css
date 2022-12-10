@@ -1,14 +1,11 @@
 .growRoomManager {
-  background-color: #252525;
-  max-width: 1000px;
-  margin: auto;
   margin-bottom: 120px;
   margin-top: 100px;
-  border-radius: 1em;
 }
 
 .header > h1 {
   text-align: center;
+  padding-top: '30px';
 }
 
 .content {

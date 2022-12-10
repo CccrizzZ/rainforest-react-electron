@@ -8,58 +8,100 @@ import {
   Paper,
   TableHead,
   Grid,
+  Chip,
 } from '@mui/material';
+import { Item } from '../utilities/Types';
 import '../style/LedgerBook.css';
 
-const bucketList: Array<Item> = [
+const purchase: Array<Item> = [
   {
     name: 'nug',
-    itemCost: 3000,
+    cost: 3000,
     quantity: 2,
   },
   {
     name: 'cone',
-    itemCost: 250,
+    cost: 250,
     quantity: 10,
   },
 ];
 
-type Item = {
-  name: string;
-  itemCost: number;
-  quantity: number;
-};
-
-const renderPurchases = () => {
-  return bucketList.map((item: Item) => {
-    return (
-      <TableRow key={bucketList.indexOf(item)}>
-        <TableCell>{item.name}</TableCell>
-        <TableCell align="right">{item.itemCost}</TableCell>
-        <TableCell align="right">{item.quantity}</TableCell>
-        <TableCell align="right">{item.itemCost * item.quantity}</TableCell>
-      </TableRow>
-    );
-  });
-};
+const sales: Array<Item> = [
+  {
+    name: 'buds',
+    cost: 2,
+    quantity: 2000,
+  },
+  {
+    name: 'vapes',
+    cost: 15,
+    quantity: 100,
+  },
+];
 
 const LedgerBook = () => {
   const [showAddPopup, setShowAddPopup] = useState(false);
-  // const [jsonDB, setJsonDB] = useState({} as TypedJsonDB<JsonDBSchema>);
+  const [purchaseArr, setPurchaseArr] = useState([] as Array<Item>);
+  const [salesArr, setSalesArr] = useState([] as Array<Item>);
 
   useEffect(() => {
-    // async function connectToDB() {
-    // }
-    // connectToDB();
-    // setJsonDB(new TypedJsonDB<JsonDBSchema>('config.json'));
-    // const result = jsonDB.get('/login');
+    setPurchaseArr(purchase);
+    setSalesArr(sales);
     // console.log(result);
   }, []);
 
+  const addSalesItem = () => {
+    console.log('add sales');
+  };
+
+  const addPurchaseItem = () => {
+    console.log('add purchase');
+  };
+
+  const getTotalCost = (itemArray: Array<Item>): number => {
+    if (itemArray.length <= 0) {
+      alert('Item list empty');
+    }
+    let total = 0;
+    itemArray.forEach((item) => {
+      total += item.cost;
+    });
+    return total;
+  };
+
+  const renderRow = (itemArray: Array<Item>) => {
+    return itemArray.map((item: Item) => {
+      return (
+        <TableRow key={itemArray.indexOf(item)}>
+          <TableCell>{item.name}</TableCell>
+          <TableCell align="right">{item.cost}</TableCell>
+          <TableCell align="right">{item.quantity}</TableCell>
+          <TableCell align="right">{item.cost * item.quantity}</TableCell>
+        </TableRow>
+      );
+    });
+  };
+
   return (
-    <div className="LedgerBook">
+    <div className="ledgerBook componentWindow">
       <Grid container spacing={2}>
-        <Grid item xs={8} className="Purchase">
+        <Grid item xs={6}>
+          <h2 className="purchase">💸 Purchase</h2>
+          <Chip
+            style={{ backgroundColor: '#fa9078', color: '#fff' }}
+            label="Add Item"
+            onClick={addPurchaseItem}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <h2 className="sales">💵 Sales</h2>
+          <Chip
+            style={{ backgroundColor: '#40d397', color: '#fff' }}
+            label="Add Item"
+            onClick={addSalesItem}
+          />
+        </Grid>
+        <Grid item xs={6}>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} size="small" aria-label="purchase">
               <TableHead>
@@ -70,14 +112,11 @@ const LedgerBook = () => {
                   <TableCell align="right">Total Cost</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>{renderPurchases()}</TableBody>
+              <TableBody>{renderRow(purchase)}</TableBody>
             </Table>
           </TableContainer>
         </Grid>
-        <Grid item xs={4}>
-          <h1>xs=4</h1>
-        </Grid>
-        <Grid item xs={8} className="Sales">
+        <Grid item xs={6}>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} size="small" aria-label="sales">
               <TableHead>
@@ -88,12 +127,17 @@ const LedgerBook = () => {
                   <TableCell align="right">Total Cost</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>{renderPurchases()}</TableBody>
+              <TableBody>{renderRow(sales)}</TableBody>
             </Table>
           </TableContainer>
         </Grid>
-        <Grid item xs={4}>
-          <h1>xs=4</h1>
+        <Grid item xs={6}>
+          <h2 className="purchase">
+            Purchase Total: ${getTotalCost(purchase)}
+          </h2>
+        </Grid>
+        <Grid item xs={6}>
+          <h2 className="sales">Sales Total: ${getTotalCost(sales)}</h2>
         </Grid>
       </Grid>
     </div>
