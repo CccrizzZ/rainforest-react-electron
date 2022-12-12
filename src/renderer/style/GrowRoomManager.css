@@ -1,6 +1,33 @@
+@import './ComponentWindow.css';
+
 .growRoomManager {
   margin-bottom: 120px;
   margin-top: 100px;
+  max-width: 1200px;
+}
+
+.plantModalBox {
+  position: absolute;
+  top: calc(50vh - 200px);
+  left: calc(50vw - 420px);
+  width: 800px;
+  background-color: #353535;
+  color: #fff;
+  padding: 20px;
+  height: 400px;
+  border-radius: 2em;
+}
+
+.plantModalContent {
+  color: #fff;
+}
+
+.plantModalFooter {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-bottom: 50px;
+  margin-right: 50px;
 }
 
 .header > h1 {
@@ -9,28 +36,19 @@
 }
 
 .content {
-  display: block;
   padding: 20px;
 }
 
-#slots {
-  border: 1px solid #000;
-  max-width: 300px;
-  background-color: #353535;
+.slots {
+  border: 2px solid #000;
+  background-color: #505050;
   border-radius: 1em;
+  min-width: 260px;
+  min-height: 50vh;
   padding: 10px;
 }
 
-#slots > h2 {
+.slots > h2 {
   color: #fff;
   text-align: center;
-}
-
-.unselectable {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }

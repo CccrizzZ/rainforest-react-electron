@@ -4,10 +4,8 @@ import {
   BottomNavigationAction,
   BottomNavigation,
   IconButton,
-  AppBar,
-  Drawer,
 } from '@mui/material';
-import { Forest, AccountBalance, Warehouse, Air } from '@mui/icons-material';
+import { Forest, AccountBalance, Warehouse } from '@mui/icons-material';
 import InventoryManager from './components/InventoryManager';
 import TimeBar from './components/TimeBar';
 import GrowRoomManager from './components/GrowRoomManager';
@@ -15,7 +13,7 @@ import LedgerBook from './components/LedgerBook';
 import './App.css';
 
 const Hub = () => {
-  const [currentPage, setCurrentPage] = useState(2);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // renders components according to navigation selection
   const renderHub = (): JSX.Element => {
@@ -37,6 +35,7 @@ const Hub = () => {
       <div className="overlay">{renderHub()}</div>
       <BottomNavigation
         className="navigation"
+        style={{ backgroundColor: '#202020', fill: '#0072ea' }}
         value={currentPage}
         onChange={(event, newValue) => {
           event.preventDefault();

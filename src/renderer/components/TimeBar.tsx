@@ -52,7 +52,7 @@ const TimeBar = () => {
       <AppBar
         position="static"
         style={{
-          backgroundColor: '#252525',
+          backgroundColor: '#202020',
           padding: '10px',
           color: '#ff7b00',
         }}

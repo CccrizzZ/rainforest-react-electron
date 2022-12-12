@@ -1,4 +1,3 @@
-import { Component } from 'react';
 import { Plant } from './Types';
 
 class JsonDBConnector {
@@ -6,10 +5,8 @@ class JsonDBConnector {
 
   constructor(infilePath: string) {
     this.filePath = infilePath;
-    console.log(`Json Database: ${this.filePath}`);
   }
 
-  // all local json read and write function
   // read a json file and load all plant objects
   readPlantDB(): void {
     console.log(`RJson Database: ${this.filePath}`);

@@ -15,7 +15,6 @@ import log from 'electron-log';
 import fs from 'fs';
 import { resolveHtmlPath } from './util';
 import { Plant } from '../renderer/utilities/Types';
-import MongoDBConnector from '../renderer/utilities/MongoDBConnector';
 
 class AppUpdater {
   constructor() {

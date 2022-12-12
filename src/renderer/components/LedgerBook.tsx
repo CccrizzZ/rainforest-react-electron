@@ -83,7 +83,7 @@ const LedgerBook = () => {
   };
 
   return (
-    <div className="ledgerBook componentWindow">
+    <div className="ledgerBook componentWindow unselectable">
       <Grid container spacing={2}>
         <Grid item xs={6}>
           <h2 className="purchase">💸 Purchase</h2>

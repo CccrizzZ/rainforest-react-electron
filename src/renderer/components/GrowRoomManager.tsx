@@ -1,27 +1,33 @@
 import { useState, useEffect } from 'react';
-import { Grid, Chip, Fab } from '@mui/material';
-import { AddCircle } from '@mui/icons-material';
+import {
+  Grid,
+  Chip,
+  Fab,
+  Modal,
+  Box,
+  FormControl,
+  InputLabel,
+  Input,
+} from '@mui/material';
+import { AddCircle, Edit } from '@mui/icons-material';
+import { GradientPinkBlue } from '@visx/gradient';
+import { Bar, Pie } from '@visx/shape';
+import { ProvidedProps, PieArcDatum } from '@visx/shape/lib/shapes/Pie';
 import JsonDBConnector from '../utilities/JsonDB';
 import { Plant } from '../utilities/Types';
 import RenderPlantCards from './RenderPlantCard';
 import '../style/GrowRoomManager.css';
 
-const examplePlant = {
-  name: 'EXAMPLE',
-  dominant: 'hybrid',
-  amount: 100,
-  thc: 25,
-  cbd: 1,
-  plantDate: '1431011162',
-  stage: 'vegetation',
-};
-
 const plant: Plant[] = [];
 
 const GrowRoomManager = () => {
   // all plants information
-  const [allBatches, setAllBatches] = useState(plant);
   const [jsonConnector] = useState(new JsonDBConnector('./db.json'));
+  const [allBatches, setAllBatches] = useState(plant);
+  const [showPlantPopUp, setShowPlantPopUp] = useState(false);
+  const [plantPopUpTitle, setPlantPopUpTitle] = useState('Add New Plant');
+  const openPopUp = () => setShowPlantPopUp(true);
+  const closePopUp = () => setShowPlantPopUp(false);
 
   useEffect(() => {
     // receive all plants data
@@ -39,13 +45,11 @@ const GrowRoomManager = () => {
       }
     });
 
-    // read json db first
-    // setJsonConnector(new JsonDBConnector('./db.json'));
+    // read from json db
     jsonConnector.readPlantDB();
   }, [jsonConnector]);
 
   // gets all plats data at selected stage
-  // will return all plants if no stage passed in
   const getPlants = (
     stage: 'germination' | 'vegetation' | 'flowering' | 'harvested' | undefined
   ): JSX.Element[] | null | React.ReactElement => {
@@ -102,16 +106,56 @@ const GrowRoomManager = () => {
     }
   };
 
-  const togglePlantUpdationPopup = (): void => {
-    // setShowPlantPopUp(!showPlantPopUp);
-    jsonConnector.appendPlantToDB(examplePlant);
+  const gridStyle = { margin: 'auto', marginTop: '0' };
+  const renderGraph = () => {
+    return (
+      <svg
+        width={300}
+        height={300}
+        style={{ backgroundColor: '#fff', borderRadius: '2em' }}
+      >
+        <GradientPinkBlue
+          id="pieFill"
+          style={{ height: '100%', width: '100%' }}
+        />
+        <Bar
+          fill="visx-pie-gradient"
+          width={60}
+          height={300}
+          x={50}
+          stroke="#ffffff"
+          strokeWidth={1}
+          rx={5}
+        />
+      </svg>
+    );
   };
 
   return (
     <div className="growRoomManager unselectable componentWindow">
+      <Modal
+        className="unselectable"
+        open={showPlantPopUp}
+        onClose={closePopUp}
+      >
+        <Box className="plantModalBox disableOutline">
+          <h2>{plantPopUpTitle}</h2>
+          <div className="plantModalContent">
+            <FormControl>
+              <InputLabel htmlFor="my-input">Email address</InputLabel>
+              <Input id="my-input" aria-describedby="my-helper-text" />
+            </FormControl>
+          </div>
+          <div className="plantModalFooter">
+            <Chip color="error" label="Close" onClick={closePopUp} />
+            <Chip color="success" label="Add Plant" onClick={closePopUp} />
+          </div>
+        </Box>
+      </Modal>
       <div className="header" style={{ paddingTop: '30px' }}>
+        {renderGraph()}
         <Fab
-          onClick={togglePlantUpdationPopup}
+          onClick={openPopUp}
           color="success"
           aria-label="add"
           style={{
@@ -123,20 +167,20 @@ const GrowRoomManager = () => {
         </Fab>
       </div>
       <div className="content">
-        <Grid container>
-          <Grid className="germination" id="slots" item xs={3}>
+        <Grid container alignItems="stretch">
+          <Grid className="germinationCol slots" style={gridStyle}>
             <h2>Germination</h2>
             {getPlants(`germination`)}
           </Grid>
-          <Grid className="vegetation" id="slots" item xs={3}>
+          <Grid className="vegetationCol slots" style={gridStyle}>
             <h2>Vegetation</h2>
             {getPlants(`vegetation`)}
           </Grid>
-          <Grid className="flowering" id="slots" item xs={3}>
+          <Grid className="floweringCol slots" style={gridStyle}>
             <h2>Flowering</h2>
             {getPlants(`flowering`)}
           </Grid>
-          <Grid className="harvested" id="slots" item xs={3}>
+          <Grid className="harvestedCol slots" style={gridStyle}>
             <h2>Harvested</h2>
             {getPlants(`harvested`)}
           </Grid>
