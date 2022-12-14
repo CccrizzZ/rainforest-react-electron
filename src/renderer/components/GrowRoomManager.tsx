@@ -8,11 +8,19 @@ import {
   FormControl,
   InputLabel,
   Input,
+  TextField,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  InputAdornment,
 } from '@mui/material';
 import { AddCircle, Edit } from '@mui/icons-material';
 import { GradientPinkBlue } from '@visx/gradient';
 import { Bar, Pie } from '@visx/shape';
 import { ProvidedProps, PieArcDatum } from '@visx/shape/lib/shapes/Pie';
+import PropTypes from 'prop-types';
+import spacetime from 'spacetime';
 import JsonDBConnector from '../utilities/JsonDB';
 import { Plant } from '../utilities/Types';
 import RenderPlantCards from './RenderPlantCard';
@@ -20,14 +28,37 @@ import '../style/GrowRoomManager.css';
 
 const plant: Plant[] = [];
 
+const blueberryKush: Plant = {
+  id: '789567895785',
+  name: 'Example plant',
+  dominant: 'indica',
+  amount: 100,
+  thc: 18.5,
+  cbd: 2,
+  plantDate: spacetime.now(),
+  stage: 'vegetation',
+  seedType: 'normal',
+};
+
 const GrowRoomManager = () => {
-  // all plants information
+  // plants data states
   const [jsonConnector] = useState(new JsonDBConnector('./db.json'));
   const [allBatches, setAllBatches] = useState(plant);
-  const [showPlantPopUp, setShowPlantPopUp] = useState(false);
-  const [plantPopUpTitle, setPlantPopUpTitle] = useState('Add New Plant');
-  const openPopUp = () => setShowPlantPopUp(true);
-  const closePopUp = () => setShowPlantPopUp(false);
+  const [currentEditingPlant, setCurrentEditingPlant] = useState({} as Plant);
+
+  // popups
+  const [showAddPlantPopUp, setShowAddPlantPopUp] = useState(false);
+  const openAddPlantPopUp = () => setShowAddPlantPopUp(true);
+  const closeAddPlantPopUp = () => setShowAddPlantPopUp(false);
+  const [showEditPlantPopUp, setShowEditPlantPopUp] = useState(false);
+  const closeEditPlantPopUp = () => {
+    setShowEditPlantPopUp(false);
+    setCurrentEditingPlant({} as Plant);
+  };
+  const openEditPlantPopUp = (selectedPlant: Plant) => {
+    setShowEditPlantPopUp(true);
+    setCurrentEditingPlant(selectedPlant);
+  };
 
   useEffect(() => {
     // receive all plants data
@@ -42,12 +73,25 @@ const GrowRoomManager = () => {
         alert('cannot find json.db');
       } else {
         jsonConnector.readPlantDB();
+        closeAddPlantPopUp();
       }
     });
 
     // read from json db
     jsonConnector.readPlantDB();
   }, [jsonConnector]);
+
+  const addPlant = () => {
+    jsonConnector.appendPlantToDB(blueberryKush);
+  };
+
+  const updatePlant = (targetPlantID: string, updatedPlant: Plant) => {
+    // jsonConnector.appendPlantToDB()
+  };
+
+  const deletePlant = (targetPlantID: string) => {
+    // jsonConnector.appendPlantToDB()
+  };
 
   // gets all plats data at selected stage
   const getPlants = (
@@ -87,37 +131,37 @@ const GrowRoomManager = () => {
     switch (stage) {
       case 'germination':
         return germinationBatches.map((batch, key) =>
-          RenderPlantCards(batch, key)
+          RenderPlantCards(batch, key, { openEditPlantPopUp })
         );
       case 'vegetation':
         return vegetationBatches.map((batch, key) =>
-          RenderPlantCards(batch, key)
+          RenderPlantCards(batch, key, { openEditPlantPopUp })
         );
       case 'flowering':
         return floweringBatches.map((batch, key) =>
-          RenderPlantCards(batch, key)
+          RenderPlantCards(batch, key, { openEditPlantPopUp })
         );
       case 'harvested':
         return harvestedBatches.map((batch, key) =>
-          RenderPlantCards(batch, key)
+          RenderPlantCards(batch, key, { openEditPlantPopUp })
         );
       default:
         return <h2>None</h2>;
     }
   };
 
-  const gridStyle = { margin: 'auto', marginTop: '0' };
+  // render grow room chart information
   const renderGraph = () => {
     return (
       <svg
         width={300}
         height={300}
-        style={{ backgroundColor: '#fff', borderRadius: '2em' }}
+        style={{ backgroundColor: '#fff', borderRadius: '2em', margin: 'auto' }}
       >
-        <GradientPinkBlue
+        {/* <GradientPinkBlue
           id="pieFill"
           style={{ height: '100%', width: '100%' }}
-        />
+        /> */}
         <Bar
           fill="visx-pie-gradient"
           width={60}
@@ -131,31 +175,160 @@ const GrowRoomManager = () => {
     );
   };
 
-  return (
-    <div className="growRoomManager unselectable componentWindow">
+  const renderAddPlantPopup = () => {
+    return (
       <Modal
         className="unselectable"
-        open={showPlantPopUp}
-        onClose={closePopUp}
+        open={showAddPlantPopUp}
+        onClose={closeAddPlantPopUp}
       >
         <Box className="plantModalBox disableOutline">
-          <h2>{plantPopUpTitle}</h2>
+          <h2>Add New Plant</h2>
           <div className="plantModalContent">
             <FormControl>
-              <InputLabel htmlFor="my-input">Email address</InputLabel>
+              <InputLabel htmlFor="my-input">Plant Name</InputLabel>
               <Input id="my-input" aria-describedby="my-helper-text" />
             </FormControl>
           </div>
           <div className="plantModalFooter">
-            <Chip color="error" label="Close" onClick={closePopUp} />
-            <Chip color="success" label="Add Plant" onClick={closePopUp} />
+            <Chip color="error" label="Close" onClick={closeAddPlantPopUp} />
+            <Chip color="success" label="Add Plant" onClick={addPlant} />
           </div>
         </Box>
       </Modal>
+    );
+  };
+
+  const renderEditPlantPopup = () => {
+    return (
+      <Modal
+        className="unselectable"
+        open={showEditPlantPopUp}
+        onClose={closeEditPlantPopUp}
+      >
+        <Box className="plantModalBox disableOutline">
+          <h2>Edit Plant</h2>
+          <div className="plantModalContent">
+            <FormControl>
+              <TextField
+                label="Name"
+                id="plant-id"
+                defaultValue={currentEditingPlant.name}
+                size="medium"
+                variant="standard"
+              />
+              <TextField
+                disabled
+                label="ID"
+                id="plant-id"
+                defaultValue={currentEditingPlant.id}
+                size="medium"
+                variant="standard"
+              />
+              <FormLabel id="demo-row-radio-buttons-group-label">
+                Dominant
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group1"
+              >
+                <FormControlLabel
+                  value="female"
+                  control={<Radio />}
+                  label="Female"
+                />
+                <FormControlLabel
+                  value="male"
+                  control={<Radio />}
+                  label="Male"
+                />
+                <FormControlLabel
+                  value="other"
+                  control={<Radio />}
+                  label="Other"
+                />
+              </RadioGroup>
+              <TextField
+                label="Amount"
+                id="plant-amount"
+                defaultValue={currentEditingPlant.amount}
+                size="medium"
+                variant="standard"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">Plants</InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                label="THC"
+                id="plant-thc"
+                defaultValue={currentEditingPlant.thc}
+                size="medium"
+                variant="standard"
+                type="number"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">%</InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                label="CBD"
+                id="plant-cbd"
+                defaultValue={currentEditingPlant.cbd}
+                size="medium"
+                variant="standard"
+                type="number"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">%</InputAdornment>
+                  ),
+                }}
+              />
+              <FormLabel id="seed-type-radio-group">Seed Type</FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="seed-type-radio-group"
+                name="row-seed-type-radio-group"
+              >
+                <FormControlLabel
+                  value="feminized"
+                  control={<Radio />}
+                  label="Feminized"
+                />
+                <FormControlLabel
+                  value="autoflowering"
+                  control={<Radio />}
+                  label="Autoflowering"
+                />
+                <FormControlLabel
+                  value="normal"
+                  control={<Radio />}
+                  label="Normal"
+                />
+              </RadioGroup>
+            </FormControl>
+          </div>
+          <div className="plantModalFooter">
+            <Chip color="error" label="Close" onClick={closeEditPlantPopUp} />
+            <Chip color="success" label="Add Plant" onClick={addPlant} />
+          </div>
+        </Box>
+      </Modal>
+    );
+  };
+
+  const gridStyle = { margin: 'auto', marginTop: '0' };
+  return (
+    <div className="growRoomManager unselectable componentWindow">
       <div className="header" style={{ paddingTop: '30px' }}>
-        {renderGraph()}
+        {/* {renderGraph()} */}
+        {renderAddPlantPopup()}
+        {renderEditPlantPopup()}
         <Fab
-          onClick={openPopUp}
+          onClick={openAddPlantPopUp}
           color="success"
           aria-label="add"
           style={{

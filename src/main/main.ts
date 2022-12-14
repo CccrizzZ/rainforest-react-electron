@@ -12,9 +12,8 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import fs from 'fs';
 import { resolveHtmlPath } from './util';
-import { Plant } from '../renderer/utilities/Types';
+import addJsonRW from './ipc/jsonRW';
 
 class AppUpdater {
   constructor() {
@@ -45,57 +44,8 @@ ipcMain.on('toggleMaximizeWindow', () => {
   }
 });
 
-// connect to mongo db
-ipcMain.on('connectMongoDB', () => {
-  // console.log(process.env.REACT_APP_MONGO_DB_CONN);
-  // Mongo.connectDB(process.env.REACT_APP_MONGO_DB_CONN);
-});
-
-// read plants data from local json file
-ipcMain.on('readPlantJsonDB', async (event, filePath) => {
-  event.preventDefault();
-  let jsonData = {};
-
-  // reads the json file if it exist
-  if (fs.existsSync(filePath)) {
-    console.log('--JSON database exist, reading...');
-    fs.readFile(filePath, (err, data) => {
-      if (err) throw err;
-      jsonData = data.toString();
-      console.log(`JSON Data: ${jsonData}`);
-      event.reply('readPlantJsonDB', jsonData);
-    });
-  } else {
-    // create a new json file if db not exist
-    console.log('--cannot find JSON database, creating a new one...');
-    fs.writeFileSync(filePath, '[]');
-    event.reply('readPlantJsonDB', JSON.stringify([]));
-  }
-});
-
-// append plants data to local json file
-ipcMain.on(
-  'appendPlantToJsonDB',
-  async (event, filePath: string, newPlant: Plant) => {
-    event.preventDefault();
-    console.log(newPlant);
-
-    // read and append
-    if (fs.existsSync(filePath)) {
-      fs.readFile(filePath, (err, data) => {
-        if (err) throw err;
-        const jsonData = JSON.parse(data.toString());
-        jsonData.push(newPlant);
-
-        // write the updated db to json file
-        fs.writeFileSync(filePath, JSON.stringify(jsonData));
-        event.reply('appendPlantToJsonDB', JSON.stringify(jsonData));
-      });
-    } else {
-      event.reply('appendPlantToJsonDB', 'cannot find file');
-    }
-  }
-);
+// add all event emitter
+addJsonRW();
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

@@ -9,13 +9,11 @@ class JsonDBConnector {
 
   // read a json file and load all plant objects
   readPlantDB(): void {
-    console.log(`RJson Database: ${this.filePath}`);
     window.electron.ipcRenderer.readPlantJsonDB(this.filePath);
   }
 
   // append a plant object to database json file
   appendPlantToDB(newPlant: Plant): void {
-    console.log(`AJson Database: ${this.filePath}`);
     window.electron.ipcRenderer.appendPlantToDB(this.filePath, newPlant);
   }
 

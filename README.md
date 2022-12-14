@@ -2,13 +2,7 @@
 
 # Rainforest
 
-Commercial marijuana grow house management tool.
-
-## Stack
-
-- Electron + React
-- Mongoose.js
-- MongoDB
+Commercial grow house management system.
 
 ## Applications
 

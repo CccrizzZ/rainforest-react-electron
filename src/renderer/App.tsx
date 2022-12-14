@@ -29,6 +29,19 @@ const Hub = () => {
     }
   };
 
+  const navIconStyle = {
+    color: '#ff7b00',
+  };
+  const navIconOverride = {
+    color: 'green',
+    '& .Mui-selected': {
+      color: 'white',
+    },
+    '& .MuiBottomNavigationAction-label': {
+      color: 'white',
+    },
+  };
+
   return (
     <div className="hub">
       <TimeBar />
@@ -42,9 +55,24 @@ const Hub = () => {
           setCurrentPage(newValue);
         }}
       >
-        <BottomNavigationAction label="InventoryManager" icon={<Warehouse />} />
-        <BottomNavigationAction label="GrowRoomManager" icon={<Forest />} />
-        <BottomNavigationAction label="LedgerBook" icon={<AccountBalance />} />
+        <BottomNavigationAction
+          disableRipple
+          label="InventoryManager"
+          icon={<Warehouse style={navIconStyle} />}
+          sx={navIconOverride}
+        />
+        <BottomNavigationAction
+          disableRipple
+          label="GrowRoomManager"
+          icon={<Forest style={navIconStyle} />}
+          sx={navIconOverride}
+        />
+        <BottomNavigationAction
+          disableRipple
+          label="LedgerBook"
+          icon={<AccountBalance style={navIconStyle} />}
+          sx={navIconOverride}
+        />
       </BottomNavigation>
     </div>
   );

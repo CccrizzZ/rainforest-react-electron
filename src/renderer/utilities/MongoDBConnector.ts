@@ -1,5 +1,5 @@
 import { Schema, model, connect } from 'mongoose';
-import Plant from './Types';
+import { Plant } from './Types';
 
 // 2. Create a Schema corresponding to the document interface.
 const plantSchema = new Schema<Plant>({

@@ -1,5 +1,5 @@
 import { Channels } from 'main/preload';
-import Plant from './utilities/Types';
+import { Plant } from './utilities/Types';
 
 declare global {
   interface Window {

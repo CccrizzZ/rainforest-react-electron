@@ -8,13 +8,14 @@
 
 .plantModalBox {
   position: absolute;
+  margin: auto;
   top: calc(50vh - 200px);
   left: calc(50vw - 420px);
   width: 800px;
   background-color: #353535;
   color: #fff;
   padding: 20px;
-  height: 400px;
+  min-height: 400px;
   border-radius: 2em;
 }
 
