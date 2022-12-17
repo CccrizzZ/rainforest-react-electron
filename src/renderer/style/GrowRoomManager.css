@@ -10,9 +10,9 @@
   position: absolute;
   margin: auto;
   top: calc(50vh - 200px);
-  left: calc(50vw - 420px);
-  width: 800px;
-  background-color: #353535;
+  left: calc(50vw - 240px);
+  width: 400px;
+  background-color: #1c1c1c;
   color: #fff;
   padding: 20px;
   min-height: 400px;
@@ -21,14 +21,13 @@
 
 .plantModalContent {
   color: #fff;
+  margin: auto;
+  display: flex;
 }
 
 .plantModalFooter {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  margin-bottom: 50px;
-  margin-right: 50px;
+  text-align: center;
+  margin-top: 50px;
 }
 
 .header > h1 {

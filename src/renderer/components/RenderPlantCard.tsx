@@ -1,6 +1,12 @@
 import { IconButton, Chip } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { Plant } from '../utilities/Types';
+import {
+  textColor,
+  indicaColor,
+  sativaColor,
+  hybridColor,
+} from '../style/GlobalStyle';
 import '../style/PlantCard.css';
 
 interface GrowRoomProps {
@@ -12,7 +18,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
   // const { openEditPlantPopUp } = props;
   const { id, name, dominant, amount, thc, cbd, stage, seedType } = plant;
   const borderColorNormal = '#000';
-  const borderColorHovered = '#ff7b00';
+  const borderColorHovered = textColor;
 
   const mouseEnterHandler = (event: React.MouseEvent<HTMLDivElement>) => {
     event.currentTarget.style.borderColor = borderColorHovered;
@@ -47,13 +53,13 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
 
     switch (dominant) {
       case 'indica':
-        chipStyle.backgroundColor = '#9B59B6';
+        chipStyle.backgroundColor = indicaColor;
         break;
       case 'sativa':
-        chipStyle.backgroundColor = '#E67E22';
+        chipStyle.backgroundColor = sativaColor;
         break;
       case 'hybrid':
-        chipStyle.backgroundColor = '#27AE60';
+        chipStyle.backgroundColor = hybridColor;
         break;
       default:
         break;

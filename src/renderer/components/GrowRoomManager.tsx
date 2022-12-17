@@ -7,7 +7,7 @@ import {
   Box,
   FormControl,
   InputLabel,
-  Input,
+  Tooltip,
   TextField,
   FormLabel,
   RadioGroup,
@@ -15,19 +15,26 @@ import {
   Radio,
   InputAdornment,
 } from '@mui/material';
-import { AddCircle, Edit } from '@mui/icons-material';
+import { AddCircle } from '@mui/icons-material';
 import { GradientPinkBlue } from '@visx/gradient';
 import { Bar, Pie } from '@visx/shape';
 import { ProvidedProps, PieArcDatum } from '@visx/shape/lib/shapes/Pie';
-import PropTypes from 'prop-types';
-import spacetime from 'spacetime';
+import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import moment, { Moment } from 'moment';
 import JsonDBConnector from '../utilities/JsonDB';
 import { Plant } from '../utilities/Types';
+import {
+  indicaColor,
+  sativaColor,
+  hybridColor,
+  textColor,
+  formControlStyle,
+} from '../style/GlobalStyle';
 import RenderPlantCards from './RenderPlantCard';
 import '../style/GrowRoomManager.css';
 
 const plant: Plant[] = [];
-
 const blueberryKush: Plant = {
   id: '789567895785',
   name: 'Example plant',
@@ -35,22 +42,84 @@ const blueberryKush: Plant = {
   amount: 100,
   thc: 18.5,
   cbd: 2,
-  plantDate: spacetime.now(),
+  plantDate: moment().format('l'),
   stage: 'vegetation',
   seedType: 'normal',
 };
 
+const indicaRadioStyle = {
+  color: indicaColor,
+  '&.Mui-checked': {
+    color: indicaColor,
+  },
+};
+
+const sativaRadioStyle = {
+  color: sativaColor,
+  '&.Mui-checked': {
+    color: sativaColor,
+  },
+};
+
+const hybridRadioStyle = {
+  color: hybridColor,
+  '&.Mui-checked': {
+    color: hybridColor,
+  },
+};
+
+const typographyStyle = {
+  '& .MuiTypography-root': {
+    color: textColor,
+  },
+};
+
+const textFieldStyle = {
+  '& label.Mui-focused': {
+    color: 'textColor',
+  },
+  '& .MuiFilledInput-root': {
+    backgroundColor: '#101010',
+  },
+  '& .MuiFilledInput-input': {
+    color: '#fff',
+  },
+  '& .MuiInputLabel-root': {
+    color: textColor,
+  },
+  '& .MuiFilledInput-root:after': {
+    borderBottom: `2px solid ${textColor}`,
+  },
+  '& .MuiSvgIcon-root': {
+    color: textColor,
+  },
+};
+
 const GrowRoomManager = () => {
   // plants data states
-  const [jsonConnector] = useState(new JsonDBConnector('./db.json'));
+  const [jsonConnector] = useState<JsonDBConnector>(
+    new JsonDBConnector('./db.json')
+  );
   const [allBatches, setAllBatches] = useState(plant);
-  const [currentEditingPlant, setCurrentEditingPlant] = useState({} as Plant);
 
-  // popups
-  const [showAddPlantPopUp, setShowAddPlantPopUp] = useState(false);
+  const [todayDate] = useState<string>(moment().format('l'));
+
+  // inputs for adding plant
+  const [currentAddPlant, setCurrentAddPlant] = useState<Plant>({} as Plant);
+  const [addPlantDate, setAddPlantDate] = useState<string>(todayDate);
+
+  // inputs for editing plant
+  const [currentEditingPlant, setCurrentEditingPlant] = useState<Plant>(
+    {} as Plant
+  );
+
+  // add popup
+  const [showAddPlantPopUp, setShowAddPlantPopUp] = useState<boolean>(false);
   const openAddPlantPopUp = () => setShowAddPlantPopUp(true);
   const closeAddPlantPopUp = () => setShowAddPlantPopUp(false);
-  const [showEditPlantPopUp, setShowEditPlantPopUp] = useState(false);
+
+  // edit popup
+  const [showEditPlantPopUp, setShowEditPlantPopUp] = useState<boolean>(false);
   const closeEditPlantPopUp = () => {
     setShowEditPlantPopUp(false);
     setCurrentEditingPlant({} as Plant);
@@ -80,10 +149,6 @@ const GrowRoomManager = () => {
     // read from json db
     jsonConnector.readPlantDB();
   }, [jsonConnector]);
-
-  const addPlant = () => {
-    jsonConnector.appendPlantToDB(blueberryKush);
-  };
 
   const updatePlant = (targetPlantID: string, updatedPlant: Plant) => {
     // jsonConnector.appendPlantToDB()
@@ -175,6 +240,45 @@ const GrowRoomManager = () => {
     );
   };
 
+  const onAddChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    currentAddPlant.name = event.target.value;
+  };
+
+  const onAddChangeDomiant = (event: React.ChangeEvent<HTMLInputElement>) => {
+    currentAddPlant.dominant = (event.target as HTMLInputElement).value;
+  };
+
+  const onAddChangeAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    currentAddPlant.amount = Number(event.target.value);
+  };
+
+  const onAddChangeThc = (event: React.ChangeEvent<HTMLInputElement>) => {
+    currentAddPlant.thc = Number(event.target.value);
+  };
+
+  const onAddChangeCbd = (event: React.ChangeEvent<HTMLInputElement>) => {
+    currentAddPlant.cbd = Number(event.target.value);
+  };
+
+  const onAddChangeDate = (newValue: moment.Moment | null) => {
+    if (newValue) {
+      setAddPlantDate(newValue?.format('l'));
+    }
+  };
+
+  const clearAddPlantPopup = () => {
+    console.log(currentAddPlant);
+    setAddPlantDate(todayDate);
+    setCurrentAddPlant({} as Plant);
+    closeAddPlantPopUp();
+  };
+
+  const addPlant = () => {
+    currentAddPlant.plantDate = addPlantDate;
+    jsonConnector.appendPlantToDB(currentAddPlant);
+    clearAddPlantPopup();
+  };
+
   const renderAddPlantPopup = () => {
     return (
       <Modal
@@ -183,15 +287,126 @@ const GrowRoomManager = () => {
         onClose={closeAddPlantPopUp}
       >
         <Box className="plantModalBox disableOutline">
-          <h2>Add New Plant</h2>
+          <h1 style={{ textAlign: 'center' }}>🎍Add New Plant</h1>
           <div className="plantModalContent">
-            <FormControl>
-              <InputLabel htmlFor="my-input">Plant Name</InputLabel>
-              <Input id="my-input" aria-describedby="my-helper-text" />
+            <FormControl style={formControlStyle}>
+              <TextField
+                label="Plant Name"
+                id="add-plant-name"
+                size="medium"
+                type="text"
+                variant="filled"
+                onChange={onAddChangeName}
+                sx={textFieldStyle}
+              />
+              <FormLabel
+                style={{ color: textColor }}
+                id="add-row-radio-buttons-group-label"
+              >
+                Dominant
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="add-row-radio-buttons-group-label"
+                name="row-radio-buttons-group1"
+                onChange={onAddChangeDomiant}
+              >
+                <FormControlLabel
+                  value="indica"
+                  control={<Radio sx={indicaRadioStyle} />}
+                  label="Indica"
+                />
+                <FormControlLabel
+                  color={textColor}
+                  value="sativa"
+                  control={<Radio sx={sativaRadioStyle} />}
+                  label="Sativa"
+                />
+                <FormControlLabel
+                  style={{ color: textColor }}
+                  value="hybrid"
+                  control={<Radio sx={hybridRadioStyle} />}
+                  label="Hybrid"
+                />
+              </RadioGroup>
+              <TextField
+                label="Amount"
+                id="add-plant-amount"
+                size="medium"
+                variant="filled"
+                type="number"
+                sx={textFieldStyle}
+                onChange={onAddChangeAmount}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end" sx={typographyStyle}>
+                      Plants
+                    </InputAdornment>
+                  ),
+                  inputProps: { min: 0 },
+                }}
+              />
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DesktopDatePicker
+                  label="Plant Date"
+                  inputFormat="MM/DD/YYYY"
+                  value={addPlantDate}
+                  onChange={onAddChangeDate}
+                  renderInput={(params) => {
+                    return (
+                      <TextField
+                        sx={textFieldStyle}
+                        size="medium"
+                        variant="filled"
+                        {...params}
+                      />
+                    );
+                  }}
+                />
+              </LocalizationProvider>
+              <TextField
+                label="THC Content"
+                id="add-thc-content"
+                size="medium"
+                variant="filled"
+                type="number"
+                sx={textFieldStyle}
+                onChange={onAddChangeThc}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end" sx={typographyStyle}>
+                      %
+                    </InputAdornment>
+                  ),
+                  inputProps: { min: 0 },
+                }}
+              />
+              <TextField
+                label="CBD Content"
+                id="add-cbd-content"
+                size="medium"
+                variant="filled"
+                type="number"
+                sx={textFieldStyle}
+                onChange={onAddChangeCbd}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end" sx={typographyStyle}>
+                      %
+                    </InputAdornment>
+                  ),
+                  inputProps: { min: 0 },
+                }}
+              />
             </FormControl>
           </div>
           <div className="plantModalFooter">
-            <Chip color="error" label="Close" onClick={closeAddPlantPopUp} />
+            <Chip
+              color="error"
+              label="Close"
+              onClick={clearAddPlantPopup}
+              style={{ marginRight: '20px' }}
+            />
             <Chip color="success" label="Add Plant" onClick={addPlant} />
           </div>
         </Box>
@@ -327,17 +542,19 @@ const GrowRoomManager = () => {
         {/* {renderGraph()} */}
         {renderAddPlantPopup()}
         {renderEditPlantPopup()}
-        <Fab
-          onClick={openAddPlantPopUp}
-          color="success"
-          aria-label="add"
-          style={{
-            margin: 'auto',
-            display: 'flex',
-          }}
-        >
-          <AddCircle />
-        </Fab>
+        <Tooltip title="Add New Plant" disableInteractive placement="top">
+          <Fab
+            onClick={openAddPlantPopUp}
+            color="success"
+            aria-label="add"
+            style={{
+              margin: 'auto',
+              display: 'flex',
+            }}
+          >
+            <AddCircle />
+          </Fab>
+        </Tooltip>
       </div>
       <div className="content">
         <Grid container alignItems="stretch">

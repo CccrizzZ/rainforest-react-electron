@@ -2,37 +2,24 @@ body {
   position: relative;
   color: white;
   height: 100vh;
-  /* background: linear-gradient(200.96deg,
-      #0026ff -29.09%,
-      #ff4800 51.77%,
-      #ff009d 129.35%); */
+  /* background: linear-gradient(#fa7d7d, #9198e5); */
+  background: linear-gradient(200.96deg, #59c173, #a17fe0);
   /* background: linear-gradient(325deg,
-      hsl(21deg 100% 47%) 0%,
-      hsl(353deg 58% 62%) 10%,
-      hsl(321deg 33% 59%) 20%,
-      hsl(259deg 37% 64%) 30%,
-      hsl(223deg 69% 66%) 40%,
-      hsl(204deg 100% 50%) 50%,
-      hsl(194deg 100% 46%) 60%,
-      hsl(182deg 100% 41%) 70%,
-      hsl(169deg 100% 43%) 80%,
-      hsl(156deg 100% 47%) 90%,
-      hsl(143deg 100% 50%) 100%); */
-  background: linear-gradient(
-    179deg,
-    #3effcd,
-    #6584ff,
-    #87ff91,
-    #ffa44b,
-    #ff3c66,
-    #a98dff
-  );
-  background-size: 1200% 1200%;
-
-  animation: gradient 41s ease infinite;
-
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
-    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      #3effcd,
+      #6584ff,
+      #87ff91,
+      #ffa44b,
+      #ff4444,
+      #806d61); */
+  /* background-size: 1200% 1200%; */
+  /* animation: gradient 41s ease infinite; */
+  /* font-family:
+    'Lucida Sans',
+    'Lucida Sans Regular',
+    'Lucida Grande',
+    'Lucida Sans Unicode',
+    Geneva, Verdana, sans-serif; */
+  font-family: sfPro;
   overflow-y: hidden;
   justify-content: center;
   align-items: center;
@@ -52,6 +39,11 @@ body {
   100% {
     background-position: 51% 0%;
   }
+}
+
+@font-face {
+  font-family: sfPro;
+  src: url('/assets/fonts/SF-Pro-Text-Light.otf');
 }
 
 .desktopApps {

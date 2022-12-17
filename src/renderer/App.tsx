@@ -30,15 +30,11 @@ const Hub = () => {
   };
 
   const navIconStyle = {
-    color: '#ff7b00',
+    color: '#e09145',
   };
   const navIconOverride = {
-    color: 'green',
-    '& .Mui-selected': {
-      color: 'white',
-    },
     '& .MuiBottomNavigationAction-label': {
-      color: 'white',
+      color: '#fcd9b8',
     },
   };
 
@@ -48,7 +44,7 @@ const Hub = () => {
       <div className="overlay">{renderHub()}</div>
       <BottomNavigation
         className="navigation"
-        style={{ backgroundColor: '#202020', fill: '#0072ea' }}
+        style={{ backgroundColor: '#17181d' }}
         value={currentPage}
         onChange={(event, newValue) => {
           event.preventDefault();

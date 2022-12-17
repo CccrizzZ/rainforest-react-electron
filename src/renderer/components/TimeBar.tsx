@@ -3,6 +3,7 @@ import { AppBar, IconButton } from '@mui/material';
 import { Circle } from '@mui/icons-material';
 import spacetime from 'spacetime';
 import { setInterval } from 'timers';
+import { textColor, barColor } from '../style/GlobalStyle';
 import '../style/TimeBar.css';
 
 const TimeBar = () => {
@@ -52,9 +53,9 @@ const TimeBar = () => {
       <AppBar
         position="static"
         style={{
-          backgroundColor: '#202020',
+          backgroundColor: barColor,
           padding: '10px',
-          color: '#ff7b00',
+          color: textColor,
         }}
       >
         <div className="clock">
