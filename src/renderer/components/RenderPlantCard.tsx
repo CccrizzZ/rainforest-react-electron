@@ -1,4 +1,14 @@
-import { IconButton, Chip } from '@mui/material';
+import {
+  IconButton,
+  Chip,
+  TableContainer,
+  Table,
+  TableCell,
+  TableRow,
+  TableHead,
+  Paper,
+  TableBody,
+} from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { Plant } from '../utilities/Types';
 import {
@@ -6,6 +16,7 @@ import {
   indicaColor,
   sativaColor,
   hybridColor,
+  lightDarkColor,
 } from '../style/GlobalStyle';
 import '../style/PlantCard.css';
 
@@ -68,6 +79,22 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
     return <Chip label={dominant} style={chipStyle} />;
   };
 
+  const renderRow = (
+    rowKey: string,
+    rowValue: number | string | JSX.Element
+  ): JSX.Element => {
+    return (
+      <TableRow>
+        <TableCell style={{ color: textColor, border: '0px' }}>
+          {rowKey}
+        </TableCell>
+        <TableCell style={{ color: '#fff', border: '0px' }}>
+          {rowValue}
+        </TableCell>
+      </TableRow>
+    );
+  };
+
   return (
     <div
       className="plantCard"
@@ -75,14 +102,37 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
       onMouseEnter={mouseEnterHandler}
       onMouseLeave={mouseExitHandler}
     >
-      <h2 style={{ padding: '0px', borderColor: borderColorNormal }}>{name}</h2>
+      <h2 style={{ marginLeft: '20px', color: '#fff' }}>{name}</h2>
       <h4>{id}</h4>
-      <div>Dominant: {renderDominantChip()}</div>
-      <p>Amount of plants: {amount}</p>
-      <p>THC content: {thc}%</p>
-      <p>CBD content: {cbd}%</p>
-      <p>Stage: {stage}</p>
-      <p>Seed Type: {seedType}</p>
+      <TableContainer
+        component={Paper}
+        style={{
+          color: textColor,
+          borderRadius: '1em',
+          backgroundColor: 'transparent',
+        }}
+      >
+        <Table
+          sx={{
+            minWidth: 0,
+            '& .MuiTableCell-root': {
+              fontFamily: 'sfPro',
+            },
+          }}
+          size="medium"
+          aria-label="plant-info"
+          style={{ backgroundColor: lightDarkColor }}
+        >
+          <TableBody>
+            {renderRow('Dominant: ', renderDominantChip())}
+            {renderRow('Amount of plants: ', amount)}
+            {renderRow('THC content: ', thc)}
+            {renderRow('CBD content: ', cbd)}
+            {renderRow('Stage: ', stage)}
+            {renderRow('Seed Type: ', seedType)}
+          </TableBody>
+        </Table>
+      </TableContainer>
       <IconButton
         color="success"
         aria-label="add to shopping cart"

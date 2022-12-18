@@ -9,6 +9,7 @@ import {
   TableHead,
   Grid,
   Chip,
+  Fade,
 } from '@mui/material';
 import { Item } from '../utilities/Types';
 import '../style/LedgerBook.css';
@@ -39,15 +40,23 @@ const sales: Array<Item> = [
   },
 ];
 
+// let fadeIn = false;
 const LedgerBook = () => {
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [purchaseArr, setPurchaseArr] = useState([] as Array<Item>);
   const [salesArr, setSalesArr] = useState([] as Array<Item>);
+  const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
     setPurchaseArr(purchase);
     setSalesArr(sales);
-    // console.log(result);
+
+    // fade in
+    setFadeIn(true);
+
+    return () => {
+      setFadeIn(false);
+    };
   }, []);
 
   const addSalesItem = () => {
@@ -83,64 +92,66 @@ const LedgerBook = () => {
   };
 
   return (
-    <div className="ledgerBook componentWindow unselectable">
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <h2 className="purchase">💸 Purchase</h2>
-          <Chip
-            style={{ backgroundColor: '#fa9078', color: '#fff' }}
-            label="Add Item"
-            onClick={addPurchaseItem}
-          />
+    <Fade in={fadeIn}>
+      <div className="ledgerBook componentWindow unselectable">
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <h2 className="purchase">💸 Purchase</h2>
+            <Chip
+              style={{ backgroundColor: '#fa9078', color: '#fff' }}
+              label="Add Item"
+              onClick={addPurchaseItem}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <h2 className="sales">💵 Sales</h2>
+            <Chip
+              style={{ backgroundColor: '#40d397', color: '#fff' }}
+              label="Add Item"
+              onClick={addSalesItem}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} size="small" aria-label="purchase">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell align="right">Unit Cost</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
+                    <TableCell align="right">Total Cost</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{renderRow(purchase)}</TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+          <Grid item xs={6}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} size="small" aria-label="sales">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell align="right">Unit Price</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
+                    <TableCell align="right">Total Cost</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>{renderRow(sales)}</TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+          <Grid item xs={6}>
+            <h2 className="purchase">
+              Purchase Total: ${getTotalCost(purchase)}
+            </h2>
+          </Grid>
+          <Grid item xs={6}>
+            <h2 className="sales">Sales Total: ${getTotalCost(sales)}</h2>
+          </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <h2 className="sales">💵 Sales</h2>
-          <Chip
-            style={{ backgroundColor: '#40d397', color: '#fff' }}
-            label="Add Item"
-            onClick={addSalesItem}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} size="small" aria-label="purchase">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell align="right">Unit Cost</TableCell>
-                  <TableCell align="right">Quantity</TableCell>
-                  <TableCell align="right">Total Cost</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{renderRow(purchase)}</TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
-        <Grid item xs={6}>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} size="small" aria-label="sales">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell align="right">Unit Price</TableCell>
-                  <TableCell align="right">Quantity</TableCell>
-                  <TableCell align="right">Total Cost</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>{renderRow(sales)}</TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
-        <Grid item xs={6}>
-          <h2 className="purchase">
-            Purchase Total: ${getTotalCost(purchase)}
-          </h2>
-        </Grid>
-        <Grid item xs={6}>
-          <h2 className="sales">Sales Total: ${getTotalCost(sales)}</h2>
-        </Grid>
-      </Grid>
-    </div>
+      </div>
+    </Fade>
   );
 };
 

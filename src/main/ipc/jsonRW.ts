@@ -44,6 +44,7 @@ const addJsonRW = () => {
           event.reply('appendPlantToJsonDB', JSON.stringify(jsonData));
         });
       } else {
+        // reply to ipc renderer that the file is not found
         event.reply('appendPlantToJsonDB', 'cannot find file');
       }
     }
