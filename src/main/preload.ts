@@ -24,6 +24,18 @@ contextBridge.exposeInMainWorld('electron', {
     appendPlantToDB(filePath: string, newPlant: Plant): void {
       ipcRenderer.send('appendPlantToJsonDB', filePath, newPlant);
     },
+    updatePlantToDB(
+      filePath: string,
+      currentPlantId: string,
+      newPlant: Plant
+    ): void {
+      ipcRenderer.send(
+        'updatePlantToJsonDB',
+        filePath,
+        currentPlantId,
+        newPlant
+      );
+    },
     shutDownSystem(): void {
       ipcRenderer.send('shutDownSystem');
     },

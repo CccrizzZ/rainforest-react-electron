@@ -13,6 +13,11 @@ declare global {
         once(channel: string, func: (...args: unknown[]) => void): void;
         readPlantJsonDB(filePath: string): string;
         appendPlantToDB(filePath: string, newPlant: Plant): void;
+        updatePlantToDB(
+          filePath: string,
+          targetPlantId: string,
+          newPlant: Plant
+        ): void;
         shutDownSystem(): void;
         toggleMaximizeWindow(): void;
         minimizeWindow(): void;

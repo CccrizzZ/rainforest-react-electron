@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { Plant } from '../utilities/Types';
+import capitalizeString from '../utilities/StringUtils';
 import {
   textColor,
   indicaColor,
@@ -21,12 +22,11 @@ import {
 import '../style/PlantCard.css';
 
 interface GrowRoomProps {
-  openEditPlantPopUp: (selectedPlant: Plant) => void;
+  openEditPlantPopup: (selectedPlant: Plant) => void;
 }
 
 // plant card component for a single plant
 const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
-  // const { openEditPlantPopUp } = props;
   const { id, name, dominant, amount, thc, cbd, stage, seedType } = plant;
   const borderColorNormal = '#000';
   const borderColorHovered = textColor;
@@ -40,19 +40,19 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
   };
 
   const mouseDownHandler = () => {
-    props.openEditPlantPopUp(plant);
+    props.openEditPlantPopup(plant);
   };
 
   const getColor = () => {
     switch (dominant) {
       case 'indica':
-        return '#9a3981';
+        return indicaColor;
       case 'sativa':
-        return '#ba4c33';
+        return sativaColor;
       case 'hybrid':
-        return '#60ab2b';
+        return hybridColor;
       default:
-        return '#fff';
+        return '#333';
     }
   };
 
@@ -61,20 +61,6 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
       color: 'white',
       backgroundColor: getColor(),
     };
-
-    switch (dominant) {
-      case 'indica':
-        chipStyle.backgroundColor = indicaColor;
-        break;
-      case 'sativa':
-        chipStyle.backgroundColor = sativaColor;
-        break;
-      case 'hybrid':
-        chipStyle.backgroundColor = hybridColor;
-        break;
-      default:
-        break;
-    }
 
     return <Chip label={dominant} style={chipStyle} />;
   };
@@ -102,8 +88,18 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
       onMouseEnter={mouseEnterHandler}
       onMouseLeave={mouseExitHandler}
     >
-      <h2 style={{ marginLeft: '20px', color: '#fff' }}>{name}</h2>
-      <h4>{id}</h4>
+      <div style={{ marginBottom: '20px', padding: '5px', textAlign: 'left' }}>
+        <h2 style={{ color: '#fff', marginBottom: '10px' }}>{name}</h2>
+        <Chip
+          label={id}
+          size="small"
+          style={{
+            fontSize: '10px',
+            color: 'white',
+            backgroundColor: lightDarkColor,
+          }}
+        />
+      </div>
       <TableContainer
         component={Paper}
         style={{

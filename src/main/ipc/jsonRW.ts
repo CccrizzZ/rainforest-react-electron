@@ -1,6 +1,17 @@
 import { ipcMain } from 'electron';
 import fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 import { Plant } from '../../renderer/utilities/Types';
+
+const generateId = (jsonData: Plant[]): string => {
+  const uuid = uuidv4();
+  jsonData.forEach((plant: Plant) => {
+    if (plant.id === uuid) {
+      generateId(jsonData);
+    }
+  });
+  return uuid;
+};
 
 // read and write json file
 const addJsonRW = () => {
@@ -37,6 +48,8 @@ const addJsonRW = () => {
         fs.readFile(filePath, (err, data) => {
           if (err) throw err;
           const jsonData = JSON.parse(data.toString());
+          newPlant.id = generateId(jsonData);
+          console.log(newPlant.id);
           jsonData.push(newPlant);
 
           // write the updated db to json file
@@ -46,6 +59,40 @@ const addJsonRW = () => {
       } else {
         // reply to ipc renderer that the file is not found
         event.reply('appendPlantToJsonDB', 'cannot find file');
+      }
+    }
+  );
+
+  // update plants data to local json file
+  ipcMain.on(
+    'updatePlantToJsonDB',
+    async (event, filePath: string, targetPlantId: string, newPlant: Plant) => {
+      event.preventDefault();
+
+      // read and append
+      if (fs.existsSync(filePath)) {
+        fs.readFile(filePath, (err, data) => {
+          if (err) throw err;
+          const jsonData = JSON.parse(data.toString());
+
+          // find and update target plant
+          for (let i = 0; i < jsonData.length; i += 1) {
+            console.log(jsonData[i].id);
+            if (jsonData[i].id === targetPlantId) {
+              jsonData[i] = newPlant;
+              console.log(jsonData[i]);
+            }
+          }
+
+          // write the updated db to json file
+          fs.writeFileSync(filePath, JSON.stringify(jsonData));
+
+          // pass the updated data to renderer
+          event.reply('updatePlantToJsonDB', JSON.stringify(jsonData));
+        });
+      } else {
+        // reply to ipc renderer that the file is not found
+        event.reply('updatePlantToJsonDB', 'cannot find file');
       }
     }
   );
