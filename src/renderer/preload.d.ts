@@ -12,12 +12,13 @@ declare global {
         ): (() => void) | undefined;
         once(channel: string, func: (...args: unknown[]) => void): void;
         readPlantJsonDB(filePath: string): string;
-        appendPlantToDB(filePath: string, newPlant: Plant): void;
-        updatePlantToDB(
+        appendPlantToJsonDB(filePath: string, newPlant: Plant): void;
+        updatePlantToJsonDB(
           filePath: string,
           targetPlantId: string,
           newPlant: Plant
         ): void;
+        deletePlantFromJsonDB(filePath: string, targetPlantId: string): void;
         shutDownSystem(): void;
         toggleMaximizeWindow(): void;
         minimizeWindow(): void;

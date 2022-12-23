@@ -21,20 +21,23 @@ contextBridge.exposeInMainWorld('electron', {
     readPlantJsonDB(filePath: string): void {
       ipcRenderer.send('readPlantJsonDB', filePath);
     },
-    appendPlantToDB(filePath: string, newPlant: Plant): void {
+    appendPlantToJsonDB(filePath: string, newPlant: Plant): void {
       ipcRenderer.send('appendPlantToJsonDB', filePath, newPlant);
     },
-    updatePlantToDB(
+    updatePlantToJsonDB(
       filePath: string,
-      currentPlantId: string,
+      targetPlantId: string,
       newPlant: Plant
     ): void {
       ipcRenderer.send(
         'updatePlantToJsonDB',
         filePath,
-        currentPlantId,
+        targetPlantId,
         newPlant
       );
+    },
+    deletePlantFromJsonDB(filePath: string, targetPlantId: number): void {
+      ipcRenderer.send('deletePlantFromJsonDB', filePath, targetPlantId);
     },
     shutDownSystem(): void {
       ipcRenderer.send('shutDownSystem');

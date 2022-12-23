@@ -27,7 +27,8 @@ interface GrowRoomProps {
 
 // plant card component for a single plant
 const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
-  const { id, name, dominant, amount, thc, cbd, stage, seedType } = plant;
+  const { id, name, dominant, amount, thc, cbd, stage, seedType, plantDate } =
+    plant;
   const borderColorNormal = '#000';
   const borderColorHovered = textColor;
 
@@ -126,6 +127,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
             {renderRow('CBD content: ', cbd)}
             {renderRow('Stage: ', stage)}
             {renderRow('Seed Type: ', seedType)}
+            {renderRow('Plant Date: ', plantDate)}
           </TableBody>
         </Table>
       </TableContainer>

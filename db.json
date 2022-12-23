@@ -1,1 +1,13 @@
-[{"id":"b272e677-e5a5-46f1-856b-3f50e30bb7cd","name":"Sour Diesel","dominant":"sativa","amount":5,"thc":20,"cbd":2,"plantDate":"12/20/2022","stage":"germination","seedType":"autoflower"}]
+[
+  {
+    "dominant": "indica",
+    "name": "Pink Lemonade",
+    "amount": 5,
+    "seedType": "femenized",
+    "plantDate": "12/3/2022",
+    "thc": 22,
+    "cbd": 1,
+    "stage": "vegetation",
+    "id": "c7fa77e9-acc1-4f9e-91b4-cae25819bdd8"
+  }
+]

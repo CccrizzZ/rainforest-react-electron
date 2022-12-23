@@ -3,6 +3,7 @@ import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { Plant } from '../../renderer/utilities/Types';
 
+// regenerate id if repeted
 const generateId = (jsonData: Plant[]): string => {
   const uuid = uuidv4();
   jsonData.forEach((plant: Plant) => {
@@ -16,7 +17,7 @@ const generateId = (jsonData: Plant[]): string => {
 // read and write json file
 const addJsonRW = () => {
   // read plants data from local json file
-  ipcMain.on('readPlantJsonDB', async (event, filePath) => {
+  ipcMain.on('readPlantJsonDB', async (event, filePath): Promise<void> => {
     event.preventDefault();
     let jsonData = {};
 
@@ -26,7 +27,7 @@ const addJsonRW = () => {
       fs.readFile(filePath, (err, data) => {
         if (err) throw err;
         jsonData = data.toString();
-        console.log(`JSON Data: ${jsonData}`);
+        // console.log(`JSON Data: ${jsonData}`);
         event.reply('readPlantJsonDB', jsonData);
       });
     } else {
@@ -40,7 +41,7 @@ const addJsonRW = () => {
   // append plants data to local json file
   ipcMain.on(
     'appendPlantToJsonDB',
-    async (event, filePath: string, newPlant: Plant) => {
+    async (event, filePath: string, newPlant: Plant): Promise<void> => {
       event.preventDefault();
 
       // read and append
@@ -66,7 +67,12 @@ const addJsonRW = () => {
   // update plants data to local json file
   ipcMain.on(
     'updatePlantToJsonDB',
-    async (event, filePath: string, targetPlantId: string, newPlant: Plant) => {
+    async (
+      event,
+      filePath: string,
+      targetPlantId: string,
+      newPlant: Plant
+    ): Promise<void> => {
       event.preventDefault();
 
       // read and append
@@ -77,10 +83,8 @@ const addJsonRW = () => {
 
           // find and update target plant
           for (let i = 0; i < jsonData.length; i += 1) {
-            console.log(jsonData[i].id);
             if (jsonData[i].id === targetPlantId) {
               jsonData[i] = newPlant;
-              console.log(jsonData[i]);
             }
           }
 
@@ -93,6 +97,44 @@ const addJsonRW = () => {
       } else {
         // reply to ipc renderer that the file is not found
         event.reply('updatePlantToJsonDB', 'cannot find file');
+      }
+    }
+  );
+
+  // delete plant by id
+  ipcMain.on(
+    'deletePlantFromJsonDB',
+    async (event, filePath: string, targetPlantId: string): Promise<void> => {
+      event.preventDefault();
+
+      // read and append
+      if (fs.existsSync(filePath)) {
+        fs.readFile(filePath, (err, data) => {
+          if (err) throw err;
+          const jsonData = JSON.parse(data.toString());
+          // find and delete target plant
+          for (let i = 0; i < jsonData.length; i += 1) {
+            if (jsonData[i].id === targetPlantId) {
+              jsonData.splice(i, 1);
+            }
+          }
+
+          // filters the null
+          const filteredArray = jsonData.filter(
+            (element: number | string): element is number | string => {
+              return element !== null;
+            }
+          );
+
+          // write the updated db to json file
+          fs.writeFileSync(filePath, JSON.stringify(filteredArray));
+
+          // pass the updated data to renderer
+          event.reply('deletePlantFromJsonDB', JSON.stringify(jsonData));
+        });
+      } else {
+        // reply to ipc renderer that the file is not found
+        event.reply('deletePlantFromJsonDB', 'cannot find file');
       }
     }
   );

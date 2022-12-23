@@ -14,14 +14,22 @@ class JsonDBConnector {
 
   // append a plant object to database json file
   appendPlantToDB(newPlant: Plant): void {
-    window.electron.ipcRenderer.appendPlantToDB(this.filePath, newPlant);
+    window.electron.ipcRenderer.appendPlantToJsonDB(this.filePath, newPlant);
   }
 
   updatePlantToDB = (targetPlantId: string, newPlant: Plant): void => {
-    window.electron.ipcRenderer.updatePlantToDB(
+    window.electron.ipcRenderer.updatePlantToJsonDB(
       this.filePath,
       targetPlantId,
       newPlant
+    );
+  };
+
+  deletePlantFromDB = (targetPlantId: string): void => {
+    console.log(targetPlantId);
+    window.electron.ipcRenderer.deletePlantFromJsonDB(
+      this.filePath,
+      targetPlantId
     );
   };
 }

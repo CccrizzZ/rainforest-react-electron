@@ -19,6 +19,7 @@ import {
   SelectChangeEvent,
   Fade,
 } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
 import { GradientPinkBlue } from '@visx/gradient';
 import { Bar, Pie } from '@visx/shape';
@@ -115,35 +116,36 @@ const radioLabel = {
   },
 };
 
-const GrowRoomManager = () => {
-  // const [fadeIn, setFadeIn] = useState(false);
+const GrowRoomManager = (): JSX.Element => {
   // plants data states
   const [jsonConnector] = useState<JsonDBConnector>(
     new JsonDBConnector('./db.json')
   );
-  const [allBatches, setAllBatches] = useState(plant);
-
-  const [todayDate] = useState<string>(moment().format('l'));
+  const [allBatches, setAllBatches] = useState<Plant[]>(plant);
 
   // inputs for adding plant
-  const [currentAddPlant, setCurrentAddPlant] = useState<Plant>(initPlant);
-  const [addPlantDate, setAddPlantDate] = useState<string>(todayDate);
+  const [currentPlant, setCurrentPlant] = useState<Plant>(initPlant);
 
   // add popup
   const [showAddPlantPopup, setShowAddPlantPopup] = useState<boolean>(false);
-  const openAddPlantPopup = () => setShowAddPlantPopup(true);
-  const closeAddPlantPopup = () => setShowAddPlantPopup(false);
+  const openAddPlantPopup = (): void => setShowAddPlantPopup(true);
+  const closeAddPlantPopup = (): void => setShowAddPlantPopup(false);
 
   // edit popup
   const [showEditPlantPopup, setShowEditPlantPopup] = useState<boolean>(false);
   const closeEditPlantPopup = () => setShowEditPlantPopup(false);
-  const openEditPlantPopup = (selectedPlant: Plant) => {
-    console.log(selectedPlant);
+  const openEditPlantPopup = (selectedPlant: Plant): void => {
     setShowEditPlantPopup(true);
-    setCurrentAddPlant(selectedPlant);
+    setCurrentPlant(selectedPlant);
+    console.log(selectedPlant.id);
   };
 
   useEffect(() => {
+    const refreshPlant = (): void => {
+      jsonConnector.readPlantDB();
+      closeAddPlantPopup();
+    };
+
     // receive all plants data
     window.electron.ipcRenderer.on('readPlantJsonDB', (arg) => {
       const db = JSON.parse(arg as string);
@@ -155,8 +157,7 @@ const GrowRoomManager = () => {
       if (arg === 'cannot find file') {
         alert('cannot find json.db');
       } else {
-        jsonConnector.readPlantDB();
-        closeAddPlantPopup();
+        refreshPlant();
       }
     });
 
@@ -165,25 +166,22 @@ const GrowRoomManager = () => {
       if (arg === 'cannot find file') {
         alert('cannot find json.db');
       } else {
-        jsonConnector.readPlantDB();
-        closeEditPlantPopup();
+        refreshPlant();
+      }
+    });
+
+    // receive delete result
+    window.electron.ipcRenderer.on('deletePlantFromJsonDB', (arg) => {
+      if (arg === 'cannot find file') {
+        alert('cannot find json.db');
+      } else {
+        refreshPlant();
       }
     });
 
     // read from json db
     jsonConnector.readPlantDB();
-
-    // // fade in
-    // setFadeIn(true);
-
-    // return () => {
-    //   setFadeIn(false);
-    // };
   }, [jsonConnector]);
-
-  const deletePlant = (targetPlantID: string) => {
-    // jsonConnector.appendPlantToDB()
-  };
 
   // gets all plats data at selected stage
   const getPlants = (
@@ -243,7 +241,7 @@ const GrowRoomManager = () => {
   };
 
   // render grow room chart information
-  const renderGraph = () => {
+  const renderGraph = (): JSX.Element => {
     return (
       <svg
         width={300}
@@ -267,8 +265,8 @@ const GrowRoomManager = () => {
     );
   };
 
-  const onAddChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentAddPlant((prevState: Plant) => {
+  const onChangeName = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setCurrentPlant((prevState: Plant) => {
       return {
         ...prevState,
         name: event.target.value,
@@ -276,8 +274,10 @@ const GrowRoomManager = () => {
     });
   };
 
-  const onAddChangeDomiant = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentAddPlant((prevState: Plant) => {
+  const onChangeDomiant = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    setCurrentPlant((prevState: Plant) => {
       return {
         ...prevState,
         dominant: (event.target as HTMLInputElement).value,
@@ -285,8 +285,8 @@ const GrowRoomManager = () => {
     });
   };
 
-  const onAddChangeSeedType = (event: SelectChangeEvent) => {
-    setCurrentAddPlant((prevState: Plant) => {
+  const onChangeSeedType = (event: SelectChangeEvent): void => {
+    setCurrentPlant((prevState: Plant) => {
       return {
         ...prevState,
         seedType: event.target.value,
@@ -294,8 +294,8 @@ const GrowRoomManager = () => {
     });
   };
 
-  const onAddChangeAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentAddPlant((prevState: Plant) => {
+  const onChangeAmount = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setCurrentPlant((prevState: Plant) => {
       return {
         ...prevState,
         amount: Number(event.target.value),
@@ -303,8 +303,8 @@ const GrowRoomManager = () => {
     });
   };
 
-  const onAddChangeThc = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentAddPlant((prevState: Plant) => {
+  const onChangeThc = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setCurrentPlant((prevState: Plant) => {
       return {
         ...prevState,
         thc: Number(event.target.value),
@@ -312,8 +312,8 @@ const GrowRoomManager = () => {
     });
   };
 
-  const onAddChangeCbd = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentAddPlant((prevState: Plant) => {
+  const onChangeCbd = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setCurrentPlant((prevState: Plant) => {
       return {
         ...prevState,
         cbd: Number(event.target.value),
@@ -321,9 +321,9 @@ const GrowRoomManager = () => {
     });
   };
 
-  const onAddChangeDate = (newValue: moment.Moment | null) => {
+  const onChangeDate = (newValue: moment.Moment | null): void => {
     if (newValue) {
-      setCurrentAddPlant((prevState: Plant) => {
+      setCurrentPlant((prevState: Plant) => {
         return {
           ...prevState,
           plantDate: newValue.format('l'),
@@ -332,8 +332,8 @@ const GrowRoomManager = () => {
     }
   };
 
-  const onAddChangeStage = (event: SelectChangeEvent) => {
-    setCurrentAddPlant((prevState: Plant) => {
+  const onChangeStage = (event: SelectChangeEvent): void => {
+    setCurrentPlant((prevState: Plant) => {
       return {
         ...prevState,
         stage: event.target.value,
@@ -341,11 +341,20 @@ const GrowRoomManager = () => {
     });
   };
 
+  const isNotCompleted = (): boolean => {
+    return (
+      currentPlant.name === '' ||
+      currentPlant.dominant === '' ||
+      currentPlant.seedType === '' ||
+      currentPlant.plantDate === '' ||
+      currentPlant.stage === ''
+    );
+  };
+
   // clear and close add plant popup
-  const clearPlantPopup = () => {
-    console.log(currentAddPlant);
-    setAddPlantDate(todayDate);
-    setCurrentAddPlant({} as Plant);
+  const clearPlantPopup = (): void => {
+    console.log(currentPlant);
+    setCurrentPlant({} as Plant);
     if (showAddPlantPopup) {
       closeAddPlantPopup();
     } else {
@@ -353,34 +362,46 @@ const GrowRoomManager = () => {
     }
   };
 
-  const updatePlant = () => {
-    jsonConnector.updatePlantToDB(currentAddPlant.id, currentAddPlant);
-    console.log('updating plant');
-    console.log(currentAddPlant);
-    clearPlantPopup();
-  };
-
-  // add plant to jsonDB
-  const addPlant = () => {
-    currentAddPlant.plantDate = addPlantDate;
-    if (
-      currentAddPlant.name === '' ||
-      currentAddPlant.dominant === '' ||
-      currentAddPlant.seedType === '' ||
-      currentAddPlant.plantDate === '' ||
-      currentAddPlant.stage === ''
-    ) {
+  const deletePlant = (): void => {
+    if (isNotCompleted()) {
       // alert the user these are required elements
       console.log(
         'please fill out the plant information, all entries are required.'
       );
       return;
     }
-    jsonConnector.appendPlantToDB(currentAddPlant);
+    jsonConnector.deletePlantFromDB(currentPlant.id);
+    console.log('deleting plant');
     clearPlantPopup();
   };
 
-  const renderAddPlantPopup = () => {
+  const updatePlant = (): void => {
+    if (isNotCompleted()) {
+      // alert the user these are required elements
+      console.log(
+        'please fill out the plant information, all entries are required.'
+      );
+      return;
+    }
+    jsonConnector.updatePlantToDB(currentPlant.id, currentPlant);
+    console.log('updating plant');
+    clearPlantPopup();
+  };
+
+  // add plant to jsonDB
+  const addPlant = (): void => {
+    if (isNotCompleted()) {
+      // alert the user these are required elements
+      console.log(
+        'please fill out the plant information, all entries are required.'
+      );
+      return;
+    }
+    jsonConnector.appendPlantToDB(currentPlant);
+    clearPlantPopup();
+  };
+
+  const renderAddPlantPopup = (): JSX.Element => {
     return (
       <Modal
         className="unselectable"
@@ -397,8 +418,8 @@ const GrowRoomManager = () => {
                 size="medium"
                 type="text"
                 variant="filled"
-                onChange={onAddChangeName}
-                value={currentAddPlant.name}
+                onChange={onChangeName}
+                value={currentPlant.name}
                 sx={textFieldStyle}
               />
               <FormLabel
@@ -411,9 +432,9 @@ const GrowRoomManager = () => {
                 row
                 aria-labelledby="add-row-radio-buttons-group-label"
                 name="row-radio-buttons-group1"
-                onChange={onAddChangeDomiant}
-                value={currentAddPlant.dominant}
-                defaultValue={currentAddPlant.dominant}
+                onChange={onChangeDomiant}
+                value={currentPlant.dominant}
+                defaultValue={currentPlant.dominant}
               >
                 <FormControlLabel
                   value="indica"
@@ -441,8 +462,8 @@ const GrowRoomManager = () => {
                 variant="filled"
                 type="number"
                 sx={textFieldStyle}
-                value={currentAddPlant.amount}
-                onChange={onAddChangeAmount}
+                value={currentPlant.amount}
+                onChange={onChangeAmount}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" sx={typographyStyle}>
@@ -464,8 +485,8 @@ const GrowRoomManager = () => {
                   id="seed-type-select-filled"
                   variant="filled"
                   size="small"
-                  onChange={onAddChangeSeedType}
-                  value={currentAddPlant.seedType}
+                  onChange={onChangeSeedType}
+                  value={currentPlant.seedType}
                   sx={selectInputStyle}
                 >
                   <MenuItem value="regular">Regular</MenuItem>
@@ -478,8 +499,8 @@ const GrowRoomManager = () => {
                 <DesktopDatePicker
                   label="Plant Date"
                   inputFormat="MM/DD/YYYY"
-                  value={currentAddPlant.plantDate}
-                  onChange={onAddChangeDate}
+                  value={currentPlant.plantDate}
+                  onChange={onChangeDate}
                   renderInput={(params) => {
                     return (
                       <TextField
@@ -499,8 +520,8 @@ const GrowRoomManager = () => {
                 variant="filled"
                 type="number"
                 sx={textFieldStyle}
-                value={currentAddPlant.thc}
-                onChange={onAddChangeThc}
+                value={currentPlant.thc}
+                onChange={onChangeThc}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" sx={typographyStyle}>
@@ -517,8 +538,8 @@ const GrowRoomManager = () => {
                 variant="filled"
                 type="number"
                 sx={textFieldStyle}
-                value={currentAddPlant.cbd}
-                onChange={onAddChangeCbd}
+                value={currentPlant.cbd}
+                onChange={onChangeCbd}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" sx={typographyStyle}>
@@ -540,8 +561,8 @@ const GrowRoomManager = () => {
                   id="plant-stage-select-filled"
                   variant="filled"
                   size="small"
-                  onChange={onAddChangeStage}
-                  value={currentAddPlant.stage}
+                  onChange={onChangeStage}
+                  value={currentPlant.stage}
                   sx={selectInputStyle}
                 >
                   <MenuItem value="germination">Germination</MenuItem>
@@ -566,7 +587,7 @@ const GrowRoomManager = () => {
     );
   };
 
-  const renderEditPlantPopup = () => {
+  const renderEditPlantPopup = (): JSX.Element => {
     return (
       <Modal
         className="unselectable"
@@ -576,6 +597,12 @@ const GrowRoomManager = () => {
         <Box className="plantModalBox disableOutline">
           <h1 style={{ textAlign: 'center' }}>🌿Edit Plant Info</h1>
           <div className="plantModalContent">
+            <Chip
+              style={{ marginLeft: '20px' }}
+              color="error"
+              label="Delete"
+              onClick={deletePlant}
+            />
             <FormControl style={formControlStyle}>
               <TextField
                 label="Plant Name"
@@ -583,8 +610,8 @@ const GrowRoomManager = () => {
                 size="medium"
                 type="text"
                 variant="filled"
-                onChange={onAddChangeName}
-                value={currentAddPlant.name}
+                onChange={onChangeName}
+                value={currentPlant.name}
                 sx={textFieldStyle}
               />
               <FormLabel
@@ -593,33 +620,35 @@ const GrowRoomManager = () => {
               >
                 Dominant
               </FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="edit-row-radio-buttons-group-label"
-                name="edit-row-radio-buttons-group1"
-                onChange={onAddChangeDomiant}
-                value={currentAddPlant.dominant}
-                defaultValue={currentAddPlant.dominant}
-              >
-                <FormControlLabel
-                  value="indica"
-                  control={<Radio sx={indicaRadioStyle} />}
-                  label="Indica"
-                  sx={radioLabel}
-                />
-                <FormControlLabel
-                  value="sativa"
-                  control={<Radio sx={sativaRadioStyle} />}
-                  label="Sativa"
-                  sx={radioLabel}
-                />
-                <FormControlLabel
-                  value="hybrid"
-                  control={<Radio sx={hybridRadioStyle} />}
-                  label="Hybrid"
-                  sx={radioLabel}
-                />
-              </RadioGroup>
+              <FormControl>
+                <RadioGroup
+                  row
+                  aria-labelledby="edit-row-radio-buttons-group-label"
+                  name="edit-row-radio-buttons-group1"
+                  onChange={onChangeDomiant}
+                  value={currentPlant.dominant}
+                  defaultValue={currentPlant.dominant}
+                >
+                  <FormControlLabel
+                    value="indica"
+                    control={<Radio sx={indicaRadioStyle} />}
+                    label="Indica"
+                    sx={radioLabel}
+                  />
+                  <FormControlLabel
+                    value="sativa"
+                    control={<Radio sx={sativaRadioStyle} />}
+                    label="Sativa"
+                    sx={radioLabel}
+                  />
+                  <FormControlLabel
+                    value="hybrid"
+                    control={<Radio sx={hybridRadioStyle} />}
+                    label="Hybrid"
+                    sx={radioLabel}
+                  />
+                </RadioGroup>
+              </FormControl>
               <TextField
                 label="Amount"
                 id="edit-plant-amount"
@@ -627,8 +656,8 @@ const GrowRoomManager = () => {
                 variant="filled"
                 type="number"
                 sx={textFieldStyle}
-                value={currentAddPlant.amount}
-                onChange={onAddChangeAmount}
+                value={currentPlant.amount}
+                onChange={onChangeAmount}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end" sx={typographyStyle}>
@@ -650,8 +679,8 @@ const GrowRoomManager = () => {
                   id="edit-seed-type-select-filled"
                   variant="filled"
                   size="small"
-                  onChange={onAddChangeSeedType}
-                  value={currentAddPlant.seedType}
+                  onChange={onChangeSeedType}
+                  value={currentPlant.seedType}
                   sx={selectInputStyle}
                 >
                   <MenuItem value="regular">Regular</MenuItem>
@@ -664,8 +693,8 @@ const GrowRoomManager = () => {
                 <DesktopDatePicker
                   label="Plant Date"
                   inputFormat="MM/DD/YYYY"
-                  value={currentAddPlant.plantDate}
-                  onChange={onAddChangeDate}
+                  value={currentPlant.plantDate}
+                  onChange={onChangeDate}
                   renderInput={(params) => {
                     return (
                       <TextField
@@ -678,42 +707,46 @@ const GrowRoomManager = () => {
                   }}
                 />
               </LocalizationProvider>
-              <TextField
-                label="THC Content"
-                id="edit-thc-content"
-                size="medium"
-                variant="filled"
-                type="number"
-                sx={textFieldStyle}
-                value={currentAddPlant.thc}
-                onChange={onAddChangeThc}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end" sx={typographyStyle}>
-                      %
-                    </InputAdornment>
-                  ),
-                  inputProps: { min: 0 },
-                }}
-              />
-              <TextField
-                label="CBD Content"
-                id="edit-cbd-content"
-                size="medium"
-                variant="filled"
-                type="number"
-                sx={textFieldStyle}
-                value={currentAddPlant.cbd}
-                onChange={onAddChangeCbd}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end" sx={typographyStyle}>
-                      %
-                    </InputAdornment>
-                  ),
-                  inputProps: { min: 0 },
-                }}
-              />
+              <FormControl>
+                <TextField
+                  label="THC Content"
+                  id="edit-thc-content"
+                  size="medium"
+                  variant="filled"
+                  type="number"
+                  sx={textFieldStyle}
+                  value={currentPlant.thc}
+                  onChange={onChangeThc}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" sx={typographyStyle}>
+                        %
+                      </InputAdornment>
+                    ),
+                    inputProps: { min: 0 },
+                  }}
+                />
+              </FormControl>
+              <FormControl>
+                <TextField
+                  label="CBD Content"
+                  id="edit-cbd-content"
+                  size="medium"
+                  variant="filled"
+                  type="number"
+                  sx={textFieldStyle}
+                  value={currentPlant.cbd}
+                  onChange={onChangeCbd}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" sx={typographyStyle}>
+                        %
+                      </InputAdornment>
+                    ),
+                    inputProps: { min: 0 },
+                  }}
+                />
+              </FormControl>
               <FormControl>
                 <FormLabel
                   style={textColorObj}
@@ -726,8 +759,8 @@ const GrowRoomManager = () => {
                   id="edit-plant-stage-select-filled"
                   variant="filled"
                   size="small"
-                  onChange={onAddChangeStage}
-                  value={currentAddPlant.stage}
+                  onChange={onChangeStage}
+                  value={currentPlant.stage}
                   sx={selectInputStyle}
                 >
                   <MenuItem value="germination">Germination</MenuItem>
@@ -770,7 +803,7 @@ const GrowRoomManager = () => {
                 display: 'flex',
               }}
             >
-              <AddCircleTwoToneIcon />
+              <Add />
             </Fab>
           </Tooltip>
         </div>
