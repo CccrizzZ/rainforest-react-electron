@@ -21,6 +21,7 @@ import {
 } from '../style/GlobalStyle';
 import '../style/PlantCard.css';
 
+// grow room props to determine which card user clicked
 interface GrowRoomProps {
   openEditPlantPopup: (selectedPlant: Plant) => void;
 }
@@ -61,9 +62,10 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
     const chipStyle = {
       color: 'white',
       backgroundColor: getColor(),
+      fontFamily: 'sfPro',
     };
 
-    return <Chip label={dominant} style={chipStyle} />;
+    return <Chip label={capitalizeString(dominant)} style={chipStyle} />;
   };
 
   const renderRow = (
@@ -98,6 +100,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
             fontSize: '10px',
             color: 'white',
             backgroundColor: lightDarkColor,
+            fontFamily: 'sfPro',
           }}
         />
       </div>
@@ -125,8 +128,8 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
             {renderRow('Amount of plants: ', amount)}
             {renderRow('THC content: ', thc)}
             {renderRow('CBD content: ', cbd)}
-            {renderRow('Stage: ', stage)}
-            {renderRow('Seed Type: ', seedType)}
+            {renderRow('Stage: ', capitalizeString(stage))}
+            {renderRow('Seed Type: ', capitalizeString(seedType))}
             {renderRow('Plant Date: ', plantDate)}
           </TableBody>
         </Table>
@@ -135,6 +138,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
         color="success"
         aria-label="add to shopping cart"
         onClick={mouseDownHandler}
+        style={{ left: '80%' }}
       >
         <Edit />
       </IconButton>

@@ -29,7 +29,6 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
 import JsonDBConnector from '../utilities/JsonDB';
 import { Plant } from '../utilities/Types';
-import Sleep from '../utilities/Sleep';
 import {
   indicaColor,
   sativaColor,
@@ -117,9 +116,10 @@ const radioLabel = {
 };
 
 const GrowRoomManager = (): JSX.Element => {
+  const [jsonPath] = useState('./db.json');
   // plants data states
   const [jsonConnector] = useState<JsonDBConnector>(
-    new JsonDBConnector('./db.json')
+    new JsonDBConnector(jsonPath)
   );
   const [allBatches, setAllBatches] = useState<Plant[]>(plant);
 
@@ -141,6 +141,7 @@ const GrowRoomManager = (): JSX.Element => {
   };
 
   useEffect(() => {
+    // fetch all plant data
     const refreshPlant = (): void => {
       jsonConnector.readPlantDB();
       closeAddPlantPopup();

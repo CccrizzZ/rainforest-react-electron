@@ -1,5 +1,6 @@
 // in the main store
 import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
 import {
   forwardToMainWithParams,
   replayActionRenderer,
@@ -9,6 +10,7 @@ import {
 } from 'electron-redux';
 
 const initialState = getInitialStateRenderer();
+// const todoApp = combineReducers(reducers)
 
 // const store = createStore(
 //   todoApp,
