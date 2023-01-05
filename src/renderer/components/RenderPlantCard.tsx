@@ -9,6 +9,7 @@ import {
   Paper,
   TableBody,
 } from '@mui/material';
+import moment from 'moment';
 import { Edit } from '@mui/icons-material';
 import { Plant } from '../utilities/Types';
 import capitalizeString from '../utilities/StringUtils';
@@ -43,6 +44,13 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
 
   const mouseDownHandler = () => {
     props.openEditPlantPopup(plant);
+  };
+
+  const getDateDifference = () => {
+    const diff = Math.abs(moment(plantDate).diff(moment(), 'days'));
+    const week = (diff - (diff % 7)) / 7;
+    const day = (diff % 7) + 1;
+    return `Week ${week + 1} Day ${day}`;
   };
 
   const getColor = () => {
@@ -84,6 +92,13 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
     );
   };
 
+  const ChipStyle = {
+    fontSize: '10px',
+    color: 'white',
+    backgroundColor: lightDarkColor,
+    fontFamily: 'sfPro',
+  };
+
   return (
     <div
       className="plantCard"
@@ -92,15 +107,18 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
       onMouseLeave={mouseExitHandler}
     >
       <div style={{ marginBottom: '20px', padding: '5px', textAlign: 'left' }}>
-        <h2 style={{ color: '#fff', marginBottom: '10px' }}>{name}</h2>
+        <h2 style={{ color: '#fff', marginBottom: '10px', marginLeft: '10px' }}>
+          {name}
+        </h2>
+        <Chip label={id} size="small" style={ChipStyle} />
         <Chip
-          label={id}
-          size="small"
+          label={getDateDifference()}
+          size="medium"
           style={{
-            fontSize: '10px',
-            color: 'white',
-            backgroundColor: lightDarkColor,
-            fontFamily: 'sfPro',
+            ...ChipStyle,
+            color: textColor,
+            fontSize: '16px',
+            marginTop: '20px',
           }}
         />
       </div>
@@ -119,7 +137,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
               fontFamily: 'sfPro',
             },
           }}
-          size="medium"
+          size="small"
           aria-label="plant-info"
           style={{ backgroundColor: lightDarkColor }}
         >

@@ -12,10 +12,10 @@ interface Plant {
 }
 
 // financial ledger item
-type Item = {
+interface Item {
   name: string;
   cost: number;
   quantity: number;
-};
+}
 
 export { Plant, Item };

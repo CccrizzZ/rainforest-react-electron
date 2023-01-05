@@ -7,6 +7,7 @@ const lightDarkColor = '#3c3c3c';
 const indicaColor = '#9B59B6';
 const sativaColor = '#E67E22';
 const hybridColor = '#27AE60';
+const moduleBGColor = '#191c23';
 
 const formControlStyle = {
   margin: 'auto',
@@ -22,4 +23,5 @@ export {
   hybridColor,
   formControlStyle,
   lightDarkColor,
+  moduleBGColor,
 };

@@ -37,6 +37,7 @@ import {
   formControlStyle,
 } from '../style/GlobalStyle';
 import RenderPlantCards from './RenderPlantCard';
+import EventHeatMap from './widget/EventHeatMap';
 import '../style/GrowRoomManager.css';
 
 const plant: Plant[] = [];
@@ -389,7 +390,6 @@ const GrowRoomManager = (): JSX.Element => {
     clearPlantPopup();
   };
 
-  // add plant to jsonDB
   const addPlant = (): void => {
     if (isNotCompleted()) {
       // alert the user these are required elements
@@ -792,6 +792,7 @@ const GrowRoomManager = (): JSX.Element => {
       <div className="growRoomManager unselectable componentWindow">
         <div className="header" style={{ paddingTop: '30px' }}>
           {/* {renderGraph()} */}
+          <EventHeatMap />
           {renderAddPlantPopup()}
           {renderEditPlantPopup()}
           <Tooltip title="Add New Plant" disableInteractive placement="top">
