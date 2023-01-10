@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { resolveHtmlPath } from './util';
 import addJsonRW from './ipc/jsonRW';
+import addMongoRW from './ipc/mongoRW';
 
 class AppUpdater {
   constructor() {
@@ -46,6 +47,7 @@ ipcMain.on('toggleMaximizeWindow', () => {
 
 // add all event emitter
 addJsonRW();
+addMongoRW();
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

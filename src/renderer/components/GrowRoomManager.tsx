@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { useState, useEffect } from 'react';
 import {
   Grid,
@@ -19,7 +20,7 @@ import {
   SelectChangeEvent,
   Fade,
 } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Add, ContentPasteGoSharp } from '@mui/icons-material';
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
 import { GradientPinkBlue } from '@visx/gradient';
 import { Bar, Pie } from '@visx/shape';
@@ -28,6 +29,7 @@ import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
 import JsonDBConnector from '../utilities/JsonDB';
+import MongoDBConnector from '../utilities/MongoDB';
 import { Plant } from '../utilities/Types';
 import {
   indicaColor,
@@ -42,7 +44,7 @@ import '../style/GrowRoomManager.css';
 
 const plant: Plant[] = [];
 const initPlant: Plant = {
-  id: '',
+  _id: '',
   name: '',
   dominant: 'indica',
   amount: 1,
@@ -116,6 +118,9 @@ const radioLabel = {
   },
 };
 
+type DatabaseSelection = 'mongo' | 'json';
+const dbSelect: DatabaseSelection = 'mongo';
+
 const GrowRoomManager = (): JSX.Element => {
   const [jsonPath] = useState('./db.json');
   // plants data states
@@ -138,13 +143,16 @@ const GrowRoomManager = (): JSX.Element => {
   const openEditPlantPopup = (selectedPlant: Plant): void => {
     setShowEditPlantPopup(true);
     setCurrentPlant(selectedPlant);
-    console.log(selectedPlant.id);
   };
 
   useEffect(() => {
     // fetch all plant data
     const refreshPlant = (): void => {
-      jsonConnector.readPlantDB();
+      if (dbSelect === 'mongo') {
+        MongoDBConnector.readPlantDB();
+      } else if (dbSelect === 'json') {
+        jsonConnector.readPlantDB();
+      }
       closeAddPlantPopup();
     };
 
@@ -181,8 +189,18 @@ const GrowRoomManager = (): JSX.Element => {
       }
     });
 
+    window.electron.ipcRenderer.on('readPlantMongoDB', (arg) => {
+      const db: Plant[] = [];
+      (arg as Plant[]).forEach((element) => {
+        db.push(element);
+      });
+      setAllBatches(db);
+    });
+
+    MongoDBConnector.readPlantDB();
+
     // read from json db
-    jsonConnector.readPlantDB();
+    // jsonConnector.readPlantDB();
   }, [jsonConnector]);
 
   // gets all plats data at selected stage
@@ -372,7 +390,7 @@ const GrowRoomManager = (): JSX.Element => {
       );
       return;
     }
-    jsonConnector.deletePlantFromDB(currentPlant.id);
+    jsonConnector.deletePlantFromDB(currentPlant._id);
     console.log('deleting plant');
     clearPlantPopup();
   };
@@ -385,7 +403,7 @@ const GrowRoomManager = (): JSX.Element => {
       );
       return;
     }
-    jsonConnector.updatePlantToDB(currentPlant.id, currentPlant);
+    jsonConnector.updatePlantToDB(currentPlant._id, currentPlant);
     console.log('updating plant');
     clearPlantPopup();
   };

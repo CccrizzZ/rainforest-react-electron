@@ -29,7 +29,8 @@ interface GrowRoomProps {
 
 // plant card component for a single plant
 const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
-  const { id, name, dominant, amount, thc, cbd, stage, seedType, plantDate } =
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { _id, name, dominant, amount, thc, cbd, stage, seedType, plantDate } =
     plant;
   const borderColorNormal = '#000';
   const borderColorHovered = textColor;
@@ -110,7 +111,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
         <h2 style={{ color: '#fff', marginBottom: '10px', marginLeft: '10px' }}>
           {name}
         </h2>
-        <Chip label={id} size="small" style={ChipStyle} />
+        <Chip label={_id} size="small" style={ChipStyle} />
         <Chip
           label={getDateDifference()}
           size="medium"

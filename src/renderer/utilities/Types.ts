@@ -1,6 +1,6 @@
 // grow room plant data
 interface Plant {
-  id: string;
+  _id: string;
   name: string;
   dominant: string;
   seedType: string;

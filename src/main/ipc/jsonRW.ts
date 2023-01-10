@@ -27,7 +27,6 @@ const addJsonRW = () => {
       fs.readFile(filePath, (err, data) => {
         if (err) throw err;
         jsonData = data.toString();
-        // console.log(`JSON Data: ${jsonData}`);
         event.reply('readPlantJsonDB', jsonData);
       });
     } else {

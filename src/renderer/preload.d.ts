@@ -23,6 +23,8 @@ declare global {
         toggleMaximizeWindow(): void;
         minimizeWindow(): void;
         connectMongoDB(): void;
+        readPlantMongoDB(): void;
+        appendPlantToMongoDB(): void;
       };
     };
   }
