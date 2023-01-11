@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { ipcMain } from 'electron';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,7 +8,7 @@ import { Plant } from '../../renderer/utilities/Types';
 const generateId = (jsonData: Plant[]): string => {
   const uuid = uuidv4();
   jsonData.forEach((plant: Plant) => {
-    if (plant.id === uuid) {
+    if (plant._id === uuid) {
       generateId(jsonData);
     }
   });
@@ -48,8 +49,8 @@ const addJsonRW = () => {
         fs.readFile(filePath, (err, data) => {
           if (err) throw err;
           const jsonData = JSON.parse(data.toString());
-          newPlant.id = generateId(jsonData);
-          console.log(newPlant.id);
+          newPlant._id = generateId(jsonData);
+          console.log(newPlant._id);
           jsonData.push(newPlant);
 
           // write the updated db to json file

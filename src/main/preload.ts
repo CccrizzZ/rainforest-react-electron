@@ -54,8 +54,14 @@ contextBridge.exposeInMainWorld('electron', {
     readPlantMongoDB(): void {
       ipcRenderer.send('readPlantMongoDB');
     },
-    appendPlantToMongoDB(newPlant: Plant): void {
-      ipcRenderer.send('appendPlantToMongoDB', newPlant);
+    createPlantMongoDB(newPlant: Plant): void {
+      ipcRenderer.send('createPlantMongoDB', newPlant);
+    },
+    updatePlantMongoDB(id: string, newPlant: Plant): void {
+      ipcRenderer.send('updatePlantMongoDB', id, newPlant);
+    },
+    deletePlantMongoDB(id: string): void {
+      ipcRenderer.send('deletePlantMongoDB', id);
     },
   },
 });

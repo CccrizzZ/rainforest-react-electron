@@ -156,14 +156,15 @@ const GrowRoomManager = (): JSX.Element => {
       closeAddPlantPopup();
     };
 
+    const ipcR = window.electron.ipcRenderer;
     // receive all plants data
-    window.electron.ipcRenderer.on('readPlantJsonDB', (arg) => {
+    ipcR.on('readPlantJsonDB', (arg) => {
       const db = JSON.parse(arg as string);
       setAllBatches(db);
     });
 
     // receive append result
-    window.electron.ipcRenderer.on('appendPlantToJsonDB', (arg) => {
+    ipcR.on('appendPlantToJsonDB', (arg) => {
       if (arg === 'cannot find file') {
         alert('cannot find json.db');
       } else {
@@ -172,7 +173,7 @@ const GrowRoomManager = (): JSX.Element => {
     });
 
     // receive update result
-    window.electron.ipcRenderer.on('updatePlantToJsonDB', (arg) => {
+    ipcR.on('updatePlantToJsonDB', (arg) => {
       if (arg === 'cannot find file') {
         alert('cannot find json.db');
       } else {
@@ -181,7 +182,7 @@ const GrowRoomManager = (): JSX.Element => {
     });
 
     // receive delete result
-    window.electron.ipcRenderer.on('deletePlantFromJsonDB', (arg) => {
+    ipcR.on('deletePlantFromJsonDB', (arg) => {
       if (arg === 'cannot find file') {
         alert('cannot find json.db');
       } else {
@@ -189,12 +190,21 @@ const GrowRoomManager = (): JSX.Element => {
       }
     });
 
-    window.electron.ipcRenderer.on('readPlantMongoDB', (arg) => {
+    ipcR.on('readPlantMongoDB', (arg) => {
       const db: Plant[] = [];
       (arg as Plant[]).forEach((element) => {
         db.push(element);
       });
       setAllBatches(db);
+    });
+    ipcR.on('createPlantMongoDB', (arg) => {
+      refreshPlant();
+    });
+    ipcR.on('deletePlantMongoDB', (arg) => {
+      refreshPlant();
+    });
+    ipcR.on('updatePlantMongoDB', (arg) => {
+      refreshPlant();
     });
 
     MongoDBConnector.readPlantDB();
@@ -373,7 +383,6 @@ const GrowRoomManager = (): JSX.Element => {
 
   // clear and close add plant popup
   const clearPlantPopup = (): void => {
-    console.log(currentPlant);
     setCurrentPlant({} as Plant);
     if (showAddPlantPopup) {
       closeAddPlantPopup();
@@ -390,7 +399,8 @@ const GrowRoomManager = (): JSX.Element => {
       );
       return;
     }
-    jsonConnector.deletePlantFromDB(currentPlant._id);
+    // jsonConnector.deletePlantFromDB(currentPlant._id);
+    MongoDBConnector.deletePlantMongoDB(currentPlant._id);
     console.log('deleting plant');
     clearPlantPopup();
   };
@@ -403,12 +413,14 @@ const GrowRoomManager = (): JSX.Element => {
       );
       return;
     }
-    jsonConnector.updatePlantToDB(currentPlant._id, currentPlant);
+    // jsonConnector.updatePlantToDB(currentPlant._id, currentPlant);
+    MongoDBConnector.updatePlantMongoDB(currentPlant._id, currentPlant);
     console.log('updating plant');
     clearPlantPopup();
   };
 
   const addPlant = (): void => {
+    console.log('adding new plant...');
     if (isNotCompleted()) {
       // alert the user these are required elements
       console.log(
@@ -416,7 +428,8 @@ const GrowRoomManager = (): JSX.Element => {
       );
       return;
     }
-    jsonConnector.appendPlantToDB(currentPlant);
+    // jsonConnector.appendPlantToDB(currentPlant);
+    MongoDBConnector.createPlantMongoDB(currentPlant);
     clearPlantPopup();
   };
 

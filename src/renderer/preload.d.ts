@@ -24,7 +24,9 @@ declare global {
         minimizeWindow(): void;
         connectMongoDB(): void;
         readPlantMongoDB(): void;
-        appendPlantToMongoDB(): void;
+        createPlantMongoDB(newPlant: Plant): void;
+        updatePlantMongoDB(id: string, newPlant: Plant): void;
+        deletePlantMongoDB(id: string): void;
       };
     };
   }
