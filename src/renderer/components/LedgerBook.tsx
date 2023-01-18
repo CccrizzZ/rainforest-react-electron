@@ -45,17 +45,16 @@ const LedgerBook = () => {
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [purchaseArr, setPurchaseArr] = useState([] as Array<Item>);
   const [salesArr, setSalesArr] = useState([] as Array<Item>);
-  const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
     setPurchaseArr(purchase);
     setSalesArr(sales);
 
     // fade in
-    setFadeIn(true);
+    // setFadeIn(true);
 
     return () => {
-      setFadeIn(false);
+      // setFadeIn(false);
     };
   }, []);
 
@@ -92,7 +91,7 @@ const LedgerBook = () => {
   };
 
   return (
-    <Fade in={fadeIn}>
+    <Fade in>
       <div className="ledgerBook componentWindow unselectable">
         <Grid container spacing={2}>
           <Grid item xs={6}>

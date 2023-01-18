@@ -1,5 +1,5 @@
 // grow room plant data
-interface Plant {
+type Plant = {
   _id: string;
   name: string;
   dominant: string;
@@ -9,7 +9,8 @@ interface Plant {
   cbd: number;
   plantDate: string; // MM/DD/YYYY
   stage: string;
-}
+  growingMedia: string;
+};
 
 // financial ledger item
 interface Item {

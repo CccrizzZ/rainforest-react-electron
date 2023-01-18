@@ -20,7 +20,7 @@ import {
   SelectChangeEvent,
   Fade,
 } from '@mui/material';
-import { Add, ContentPasteGoSharp } from '@mui/icons-material';
+import { Add } from '@mui/icons-material';
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
 import { GradientPinkBlue } from '@visx/gradient';
 import { Bar, Pie } from '@visx/shape';
@@ -39,10 +39,9 @@ import {
   formControlStyle,
 } from '../style/GlobalStyle';
 import RenderPlantCards from './RenderPlantCard';
-import EventHeatMap from './widget/EventHeatMap';
+import EventCalender from './widget/EventCalender';
 import '../style/GrowRoomManager.css';
 
-const plant: Plant[] = [];
 const initPlant: Plant = {
   _id: '',
   name: '',
@@ -53,6 +52,7 @@ const initPlant: Plant = {
   plantDate: moment().format('l'),
   stage: 'germination',
   seedType: 'regular',
+  growingMedia: 'hydroponics',
 };
 
 const indicaRadioStyle = {
@@ -127,7 +127,7 @@ const GrowRoomManager = (): JSX.Element => {
   const [jsonConnector] = useState<JsonDBConnector>(
     new JsonDBConnector(jsonPath)
   );
-  const [allBatches, setAllBatches] = useState<Plant[]>(plant);
+  const [allBatches, setAllBatches] = useState<Plant[]>([] as Plant[]);
 
   // inputs for adding plant
   const [currentPlant, setCurrentPlant] = useState<Plant>(initPlant);
@@ -157,13 +157,12 @@ const GrowRoomManager = (): JSX.Element => {
     };
 
     const ipcR = window.electron.ipcRenderer;
-    // receive all plants data
+
+    // json db operation
     ipcR.on('readPlantJsonDB', (arg) => {
       const db = JSON.parse(arg as string);
       setAllBatches(db);
     });
-
-    // receive append result
     ipcR.on('appendPlantToJsonDB', (arg) => {
       if (arg === 'cannot find file') {
         alert('cannot find json.db');
@@ -171,8 +170,6 @@ const GrowRoomManager = (): JSX.Element => {
         refreshPlant();
       }
     });
-
-    // receive update result
     ipcR.on('updatePlantToJsonDB', (arg) => {
       if (arg === 'cannot find file') {
         alert('cannot find json.db');
@@ -180,8 +177,6 @@ const GrowRoomManager = (): JSX.Element => {
         refreshPlant();
       }
     });
-
-    // receive delete result
     ipcR.on('deletePlantFromJsonDB', (arg) => {
       if (arg === 'cannot find file') {
         alert('cannot find json.db');
@@ -190,6 +185,7 @@ const GrowRoomManager = (): JSX.Element => {
       }
     });
 
+    // mongodb listenser
     ipcR.on('readPlantMongoDB', (arg) => {
       const db: Plant[] = [];
       (arg as Plant[]).forEach((element) => {
@@ -207,6 +203,7 @@ const GrowRoomManager = (): JSX.Element => {
       refreshPlant();
     });
 
+    // read plants data from mongodb
     MongoDBConnector.readPlantDB();
 
     // read from json db
@@ -371,14 +368,21 @@ const GrowRoomManager = (): JSX.Element => {
     });
   };
 
+  const onChangeGrowingMedia = (event: SelectChangeEvent): void => {
+    setCurrentPlant((prevState: Plant) => {
+      return {
+        ...prevState,
+        growingMedia: event.target.value,
+      };
+    });
+  };
+
   const isNotCompleted = (): boolean => {
-    return (
-      currentPlant.name === '' ||
-      currentPlant.dominant === '' ||
-      currentPlant.seedType === '' ||
-      currentPlant.plantDate === '' ||
-      currentPlant.stage === ''
-    );
+    alert('warning: form not completed');
+    const array = Object.values(currentPlant);
+    // console.log(Array.prototype.shift().call(array));
+    // return (array as Array<string>).some((x) => x === '');
+    return true;
   };
 
   // clear and close add plant popup
@@ -392,16 +396,8 @@ const GrowRoomManager = (): JSX.Element => {
   };
 
   const deletePlant = (): void => {
-    if (isNotCompleted()) {
-      // alert the user these are required elements
-      console.log(
-        'please fill out the plant information, all entries are required.'
-      );
-      return;
-    }
     // jsonConnector.deletePlantFromDB(currentPlant._id);
     MongoDBConnector.deletePlantMongoDB(currentPlant._id);
-    console.log('deleting plant');
     clearPlantPopup();
   };
 
@@ -441,7 +437,7 @@ const GrowRoomManager = (): JSX.Element => {
         onClose={closeAddPlantPopup}
       >
         <Box className="plantModalBox disableOutline">
-          <h1 style={{ textAlign: 'center' }}>🎍Add New Plant</h1>
+          <h1 style={{ textAlign: 'center' }}>🎍Add New Cultivar</h1>
           <div className="plantModalContent">
             <FormControl style={formControlStyle}>
               <TextField
@@ -603,6 +599,26 @@ const GrowRoomManager = (): JSX.Element => {
                   <MenuItem value="harvested">Harvested</MenuItem>
                 </Select>
               </FormControl>
+              <FormControl>
+                <FormLabel style={textColorObj} id="add-grow-medium-label">
+                  Growing Media
+                </FormLabel>
+                <Select
+                  labelId="add-grow-medium-label"
+                  id="add-grow-medium-label"
+                  variant="filled"
+                  size="small"
+                  onChange={onChangeGrowingMedia}
+                  value={currentPlant.growingMedia}
+                  sx={selectInputStyle}
+                >
+                  <MenuItem value="soil">Soil With Nutrients</MenuItem>
+                  <MenuItem value="dwc">Deep Water Culture</MenuItem>
+                  <MenuItem value="aeroponics">Aeroponics</MenuItem>
+                  <MenuItem value="drip">Drip</MenuItem>
+                  <MenuItem value="organic">Organic</MenuItem>
+                </Select>
+              </FormControl>
             </FormControl>
           </div>
           <div className="plantModalFooter">
@@ -627,7 +643,7 @@ const GrowRoomManager = (): JSX.Element => {
         onClose={closeAddPlantPopup}
       >
         <Box className="plantModalBox disableOutline">
-          <h1 style={{ textAlign: 'center' }}>🌿Edit Plant Info</h1>
+          <h1 style={{ textAlign: 'center' }}>🌿Edit Cultivar Info</h1>
           <div className="plantModalContent">
             <Chip
               style={{ marginLeft: '20px' }}
@@ -801,6 +817,26 @@ const GrowRoomManager = (): JSX.Element => {
                   <MenuItem value="harvested">Harvested</MenuItem>
                 </Select>
               </FormControl>
+              <FormControl>
+                <FormLabel style={textColorObj} id="edit-grow-medium-label">
+                  Growing Media
+                </FormLabel>
+                <Select
+                  labelId="edit-grow-medium-label"
+                  id="edit-grow-medium-label"
+                  variant="filled"
+                  size="small"
+                  onChange={onChangeGrowingMedia}
+                  value={currentPlant.growingMedia}
+                  sx={selectInputStyle}
+                >
+                  <MenuItem value="soil">Soil With Nutrients</MenuItem>
+                  <MenuItem value="dwc">Deep Water Culture</MenuItem>
+                  <MenuItem value="aeroponics">Aeroponics</MenuItem>
+                  <MenuItem value="drip">Drip</MenuItem>
+                  <MenuItem value="organic">Organic</MenuItem>
+                </Select>
+              </FormControl>
             </FormControl>
           </div>
           <div className="plantModalFooter">
@@ -823,7 +859,7 @@ const GrowRoomManager = (): JSX.Element => {
       <div className="growRoomManager unselectable componentWindow">
         <div className="header" style={{ paddingTop: '30px' }}>
           {/* {renderGraph()} */}
-          <EventHeatMap />
+          <EventCalender />
           {renderAddPlantPopup()}
           {renderEditPlantPopup()}
           <Tooltip title="Add New Plant" disableInteractive placement="top">

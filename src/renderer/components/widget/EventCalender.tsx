@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AppBar, Grid } from '@mui/material';
 import { Circle } from '@mui/icons-material';
 import HeatMap, { HeatMapValue } from '@uiw/react-heat-map';
+import moment from 'moment';
 import { textColor, darkColor, moduleBGColor } from '../../style/GlobalStyle';
 
 const style = {
@@ -13,6 +14,25 @@ const style = {
   marginBottom: '20px',
 };
 
+// event interface
+type PlantEvent = {
+  date: string;
+  content: string;
+  affectedPlantsBatchId: string[];
+};
+
+const maintnanceEvent = {
+  date: moment().format('l'),
+  content: 'ph adjustment',
+  affectedPlantsBatchId: ['1'],
+};
+
+const events: PlantEvent[] = [
+  maintnanceEvent,
+  maintnanceEvent,
+  maintnanceEvent,
+];
+
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const months = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -21,8 +41,9 @@ const mockData: HeatMapValue[] = [
   { date: '2016/05/04', count: 11, content: 'watering' },
 ];
 
-const EventHeatMap = () => {
+const EventCalender = () => {
   const [eventData, setEventData] = useState<HeatMapValue[]>([]);
+  const [eventArr, setEventArr] = useState<PlantEvent[]>(events);
 
   useEffect(() => {
     console.log('load event heat map');
@@ -71,7 +92,7 @@ const EventHeatMap = () => {
       <h1 style={{ display: 'table', margin: 'auto', marginTop: '10px' }}>
         Event Record
       </h1>
-      <HeatMap
+      {/* <HeatMap
         style={{
           color: textColor,
           width: '60%',
@@ -96,10 +117,10 @@ const EventHeatMap = () => {
           width: 10,
           height: 10,
         }}
-      />
+      /> */}
       {renderHeatMapCalender()}
     </div>
   );
 };
 
-export default EventHeatMap;
+export default EventCalender;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
   IconButton,
   Chip,
@@ -29,11 +30,20 @@ interface GrowRoomProps {
 
 // plant card component for a single plant
 const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { _id, name, dominant, amount, thc, cbd, stage, seedType, plantDate } =
-    plant;
+  const {
+    _id,
+    name,
+    dominant,
+    amount,
+    thc,
+    cbd,
+    stage,
+    seedType,
+    plantDate,
+    growingMedia,
+  } = plant;
   const borderColorNormal = '#000';
-  const borderColorHovered = textColor;
+  const borderColorHovered = '#fff';
 
   const mouseEnterHandler = (event: React.MouseEvent<HTMLDivElement>) => {
     event.currentTarget.style.borderColor = borderColorHovered;
@@ -100,15 +110,44 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
     fontFamily: 'sfPro',
   };
 
+  const getCardBackground = () => {
+    switch (dominant) {
+      case 'indica':
+        return {
+          background:
+            'linear-gradient(to top, #7d00af, #9e0096, #b1007f, #bb006b, #be245a)',
+        };
+      case 'sativa':
+        return {
+          background:
+            'linear-gradient(to bottom, #e56c00, #de5e0a, #d64f12, #cd4017, #c4301b)',
+        };
+      case 'hybrid':
+        return {
+          background:
+            'linear-gradient(to top, #00b74d, #00a95a, #009b63, #008d67, #007e67)',
+        };
+      default:
+        return { background: '#333' };
+    }
+  };
+
   return (
     <div
       className="plantCard"
       key={key}
       onMouseEnter={mouseEnterHandler}
       onMouseLeave={mouseExitHandler}
+      style={getCardBackground()}
     >
       <div style={{ marginBottom: '20px', padding: '5px', textAlign: 'left' }}>
-        <h2 style={{ color: '#fff', marginBottom: '10px', marginLeft: '10px' }}>
+        <h2
+          style={{
+            color: '#fff',
+            marginBottom: '10px',
+            marginLeft: '10px',
+          }}
+        >
           {name}
         </h2>
         <Chip label={_id} size="small" style={ChipStyle} />
@@ -119,7 +158,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
             ...ChipStyle,
             color: textColor,
             fontSize: '16px',
-            marginTop: '20px',
+            marginTop: '10px',
           }}
         />
       </div>
@@ -144,22 +183,23 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
         >
           <TableBody>
             {renderRow('Dominant: ', renderDominantChip())}
-            {renderRow('Amount of plants: ', amount)}
+            {renderRow('Number of plants: ', amount)}
             {renderRow('THC content: ', thc)}
             {renderRow('CBD content: ', cbd)}
             {renderRow('Stage: ', capitalizeString(stage))}
             {renderRow('Seed Type: ', capitalizeString(seedType))}
             {renderRow('Plant Date: ', plantDate)}
+            {renderRow('Growing Media: ', growingMedia)}
           </TableBody>
         </Table>
       </TableContainer>
       <IconButton
-        color="success"
-        aria-label="add to shopping cart"
+        color="default"
+        aria-label="edit"
         onClick={mouseDownHandler}
         style={{ left: '80%' }}
       >
-        <Edit />
+        <Edit style={{ color: 'white' }} />
       </IconButton>
     </div>
   );
