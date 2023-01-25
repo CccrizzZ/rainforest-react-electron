@@ -4,7 +4,7 @@ import { Circle } from '@mui/icons-material';
 // import spacetime from 'spacetime';
 import moment, { Moment } from 'moment';
 import { setInterval } from 'timers';
-import { textColor, barColor } from '../style/GlobalStyle';
+import { globalColor } from '../style/GlobalStyle';
 import '../style/TimeBar.css';
 
 const TimeBar = () => {
@@ -48,9 +48,9 @@ const TimeBar = () => {
       <AppBar
         position="static"
         style={{
-          backgroundColor: barColor,
+          backgroundColor: globalColor.barColor,
           padding: '10px',
-          color: textColor,
+          color: globalColor.textColor,
         }}
       >
         <div className="clock">

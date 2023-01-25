@@ -14,13 +14,7 @@ import moment from 'moment';
 import { Edit } from '@mui/icons-material';
 import { Plant } from '../utilities/Types';
 import capitalizeString from '../utilities/StringUtils';
-import {
-  textColor,
-  indicaColor,
-  sativaColor,
-  hybridColor,
-  lightDarkColor,
-} from '../style/GlobalStyle';
+import { globalColor } from '../style/GlobalStyle';
 import '../style/PlantCard.css';
 
 // grow room props to determine which card user clicked
@@ -67,11 +61,11 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
   const getColor = () => {
     switch (dominant) {
       case 'indica':
-        return indicaColor;
+        return globalColor.indicaColor;
       case 'sativa':
-        return sativaColor;
+        return globalColor.sativaColor;
       case 'hybrid':
-        return hybridColor;
+        return globalColor.hybridColor;
       default:
         return '#333';
     }
@@ -93,7 +87,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
   ): JSX.Element => {
     return (
       <TableRow>
-        <TableCell style={{ color: textColor, border: '0px' }}>
+        <TableCell style={{ color: globalColor.textColor, border: '0px' }}>
           {rowKey}
         </TableCell>
         <TableCell style={{ color: '#fff', border: '0px' }}>
@@ -106,7 +100,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
   const ChipStyle = {
     fontSize: '10px',
     color: 'white',
-    backgroundColor: lightDarkColor,
+    backgroundColor: globalColor.lightDarkColor,
     fontFamily: 'sfPro',
   };
 
@@ -156,7 +150,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
           size="medium"
           style={{
             ...ChipStyle,
-            color: textColor,
+            color: globalColor.textColor,
             fontSize: '16px',
             marginTop: '10px',
           }}
@@ -165,7 +159,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
       <TableContainer
         component={Paper}
         style={{
-          color: textColor,
+          color: globalColor.textColor,
           borderRadius: '1em',
           backgroundColor: 'transparent',
         }}
@@ -179,7 +173,7 @@ const RenderPlantCards = (plant: Plant, key: number, props: GrowRoomProps) => {
           }}
           size="small"
           aria-label="plant-info"
-          style={{ backgroundColor: lightDarkColor }}
+          style={{ backgroundColor: globalColor.lightDarkColor }}
         >
           <TableBody>
             {renderRow('Dominant: ', renderDominantChip())}

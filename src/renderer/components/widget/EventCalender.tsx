@@ -3,12 +3,12 @@ import { AppBar, Grid } from '@mui/material';
 import { Circle } from '@mui/icons-material';
 import HeatMap, { HeatMapValue } from '@uiw/react-heat-map';
 import moment from 'moment';
-import { textColor, darkColor, moduleBGColor } from '../../style/GlobalStyle';
+import { globalColor } from '../../style/GlobalStyle';
 
 const style = {
   borderRadius: '2em',
   border: '1px solid black',
-  backgroundColor: moduleBGColor,
+  backgroundColor: globalColor.moduleBGColor,
   width: '80%',
   margin: 'auto',
   marginBottom: '20px',
@@ -71,16 +71,16 @@ const EventCalender = () => {
           marginBottom: '20px',
         }}
       >
-        <Grid item xs={1} style={{ color: textColor }}>
+        <Grid item xs={1} style={{ color: globalColor.textColor }}>
           {renderYAxis(days)}
         </Grid>
-        <Grid item xs={11} style={{ backgroundColor: darkColor }}>
+        <Grid item xs={11} style={{ backgroundColor: globalColor.darkColor }}>
           Content
         </Grid>
-        <Grid item xs={12} style={{ backgroundColor: textColor }}>
+        <Grid item xs={12} style={{ backgroundColor: globalColor.textColor }}>
           X Axis
         </Grid>
-        <Grid item xs={12} style={{ backgroundColor: darkColor }}>
+        <Grid item xs={12} style={{ backgroundColor: globalColor.darkColor }}>
           Legend
         </Grid>
       </Grid>

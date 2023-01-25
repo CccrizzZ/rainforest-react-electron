@@ -19,4 +19,8 @@ interface Item {
   quantity: number;
 }
 
-export { Plant, Item };
+interface ISetting {
+  dbSelection: 'mongo' | 'json';
+}
+
+export { Plant, Item, ISetting };

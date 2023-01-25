@@ -21,23 +21,13 @@ import {
   Fade,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
-import { GradientPinkBlue } from '@visx/gradient';
-import { Bar, Pie } from '@visx/shape';
-import { ProvidedProps, PieArcDatum } from '@visx/shape/lib/shapes/Pie';
 import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
 import JsonDBConnector from '../utilities/JsonDB';
 import MongoDBConnector from '../utilities/MongoDB';
 import { Plant } from '../utilities/Types';
-import {
-  indicaColor,
-  sativaColor,
-  hybridColor,
-  textColor,
-  formControlStyle,
-} from '../style/GlobalStyle';
+import { globalColor, formControlStyle } from '../style/GlobalStyle';
 import RenderPlantCards from './RenderPlantCard';
 import EventCalender from './widget/EventCalender';
 import '../style/GrowRoomManager.css';
@@ -56,34 +46,34 @@ const initPlant: Plant = {
 };
 
 const indicaRadioStyle = {
-  color: indicaColor,
+  color: globalColor.indicaColor,
   '&.Mui-checked': {
-    color: indicaColor,
+    color: globalColor.indicaColor,
   },
 };
 
 const sativaRadioStyle = {
-  color: sativaColor,
+  color: globalColor.sativaColor,
   '&.Mui-checked': {
-    color: sativaColor,
+    color: globalColor.sativaColor,
   },
 };
 
 const hybridRadioStyle = {
-  color: hybridColor,
+  color: globalColor.hybridColor,
   '&.Mui-checked': {
-    color: hybridColor,
+    color: globalColor.hybridColor,
   },
 };
 
 const typographyStyle = {
   '& .MuiTypography-root': {
-    color: textColor,
+    color: globalColor.textColor,
   },
 };
 
 const textColorObj = {
-  color: textColor,
+  color: globalColor.textColor,
   fontFamily: 'sfPro',
 };
 
@@ -100,7 +90,7 @@ const textFieldStyle = {
     fontFamily: 'sfPro',
   },
   '& .MuiFilledInput-root:after': {
-    borderBottom: `2px solid ${textColor}`,
+    borderBottom: `2px solid ${globalColor.textColor}`,
   },
 };
 
@@ -123,10 +113,11 @@ const dbSelect: DatabaseSelection = 'mongo';
 
 const GrowRoomManager = (): JSX.Element => {
   const [jsonPath] = useState('./db.json');
-  // plants data states
   const [jsonConnector] = useState<JsonDBConnector>(
     new JsonDBConnector(jsonPath)
   );
+
+  // all cultivars batches data
   const [allBatches, setAllBatches] = useState<Plant[]>([] as Plant[]);
 
   // inputs for adding plant
@@ -193,13 +184,13 @@ const GrowRoomManager = (): JSX.Element => {
       });
       setAllBatches(db);
     });
-    ipcR.on('createPlantMongoDB', (arg) => {
+    ipcR.on('createPlantMongoDB', () => {
       refreshPlant();
     });
-    ipcR.on('deletePlantMongoDB', (arg) => {
+    ipcR.on('deletePlantMongoDB', () => {
       refreshPlant();
     });
-    ipcR.on('updatePlantMongoDB', (arg) => {
+    ipcR.on('updatePlantMongoDB', () => {
       refreshPlant();
     });
 
@@ -265,31 +256,6 @@ const GrowRoomManager = (): JSX.Element => {
       default:
         return <h2>None</h2>;
     }
-  };
-
-  // render grow room chart information
-  const renderGraph = (): JSX.Element => {
-    return (
-      <svg
-        width={300}
-        height={300}
-        style={{ backgroundColor: '#fff', borderRadius: '2em', margin: 'auto' }}
-      >
-        {/* <GradientPinkBlue
-          id="pieFill"
-          style={{ height: '100%', width: '100%' }}
-        /> */}
-        <Bar
-          fill="visx-pie-gradient"
-          width={60}
-          height={300}
-          x={50}
-          stroke="#ffffff"
-          strokeWidth={1}
-          rx={5}
-        />
-      </svg>
-    );
   };
 
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -377,12 +343,13 @@ const GrowRoomManager = (): JSX.Element => {
     });
   };
 
+  // check for absent field on batch data
   const isNotCompleted = (): boolean => {
-    alert('warning: form not completed');
-    const array = Object.values(currentPlant);
-    // console.log(Array.prototype.shift().call(array));
-    // return (array as Array<string>).some((x) => x === '');
-    return true;
+    if (currentPlant.name === '') {
+      alert('warning: form not completed');
+      return true;
+    }
+    return false;
   };
 
   // clear and close add plant popup
@@ -858,7 +825,6 @@ const GrowRoomManager = (): JSX.Element => {
     <Fade in>
       <div className="growRoomManager unselectable componentWindow">
         <div className="header" style={{ paddingTop: '30px' }}>
-          {/* {renderGraph()} */}
           <EventCalender />
           {renderAddPlantPopup()}
           {renderEditPlantPopup()}

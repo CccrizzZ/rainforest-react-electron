@@ -5,15 +5,28 @@ import {
   BottomNavigation,
   IconButton,
 } from '@mui/material';
-import { Forest, AccountBalance, Warehouse } from '@mui/icons-material';
+import {
+  Forest,
+  AccountBalance,
+  Warehouse,
+  Settings,
+} from '@mui/icons-material';
 import InventoryManager from './components/InventoryManager';
 import TimeBar from './components/TimeBar';
 import GrowRoomManager from './components/GrowRoomManager';
 import LedgerBook from './components/LedgerBook';
+import SettingsComponent from './components/SettingsComponent';
+import { ISetting } from './utilities/Types';
 import './App.css';
+
+const defaultAppSettings: ISetting = {
+  dbSelection: 'mongo',
+};
 
 const Hub = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  // need redux
+  const [appSettings, setAppSettings] = useState(defaultAppSettings);
 
   // renders components according to navigation selection
   const renderHub = (): JSX.Element => {
@@ -24,6 +37,8 @@ const Hub = () => {
         return <GrowRoomManager />;
       case 2:
         return <LedgerBook />;
+      case 3:
+        return <SettingsComponent />;
       default:
         return <h1>404</h1>;
     }
@@ -67,6 +82,12 @@ const Hub = () => {
           disableRipple
           label="LedgerBook"
           icon={<AccountBalance style={navIconStyle} />}
+          sx={navIconOverride}
+        />
+        <BottomNavigationAction
+          disableRipple
+          label="Settings"
+          icon={<Settings style={navIconStyle} />}
           sx={navIconOverride}
         />
       </BottomNavigation>
