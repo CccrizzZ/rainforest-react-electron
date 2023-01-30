@@ -29,7 +29,7 @@ const SettingsComponent = (): JSX.Element => {
   return (
     <div style={SettingsComponentStyle}>
       <h1 style={{ padding: '20px' }}>Settings</h1>
-      <Paper elevation={3}>
+      <Paper elevation={3} style={{ userSelect: 'none' }}>
         <h4>Database</h4>
         <FormControl>
           <FormLabel id="db-row-radio-buttons-group-label">Gender</FormLabel>

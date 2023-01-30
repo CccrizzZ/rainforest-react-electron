@@ -3,7 +3,9 @@
   -ms-user-select: none;
   user-select: none;
   -webkit-app-region: drag;
-  z-index: -10;
+  z-index: 1500;
+  position: relative;
+  width: 100%;
 }
 
 .clock {

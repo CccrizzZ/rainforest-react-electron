@@ -4,6 +4,13 @@ import {
   BottomNavigationAction,
   BottomNavigation,
   IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Box,
 } from '@mui/material';
 import {
   Forest,
@@ -16,17 +23,33 @@ import TimeBar from './components/TimeBar';
 import GrowRoomManager from './components/GrowRoomManager';
 import LedgerBook from './components/LedgerBook';
 import SettingsComponent from './components/SettingsComponent';
+import { globalColor } from './style/GlobalStyle';
 import { ISetting } from './utilities/Types';
 import './App.css';
 
 const defaultAppSettings: ISetting = {
   dbSelection: 'mongo',
 };
+const navIconStyle = {
+  color: '#e09145',
+};
+const navIconOverride = {
+  '& .MuiBottomNavigationAction-label': {
+    color: '#fcd9b8',
+  },
+};
 
 const Hub = () => {
   const [currentPage, setCurrentPage] = useState(1);
   // need redux
   const [appSettings, setAppSettings] = useState(defaultAppSettings);
+  const [drawerWidth] = useState(250);
+  const [allComponents] = useState([
+    'InventoryManager',
+    'GrowRoomManager',
+    'LedgerBook',
+    'SettingsComponent',
+  ]);
 
   // renders components according to navigation selection
   const renderHub = (): JSX.Element => {
@@ -44,20 +67,68 @@ const Hub = () => {
     }
   };
 
-  const navIconStyle = {
-    color: '#e09145',
+  const renderIcon = (componentName: string): JSX.Element => {
+    switch (componentName) {
+      case 'InventoryManager':
+        return <Warehouse style={navIconStyle} />;
+      case 'GrowRoomManager':
+        return <Forest style={navIconStyle} />;
+      case 'LedgerBook':
+        return <AccountBalance style={navIconStyle} />;
+      case 'SettingsComponent':
+        return <Settings style={navIconStyle} />;
+      default:
+        return <Forest style={navIconStyle} />;
+        break;
+    }
   };
-  const navIconOverride = {
-    '& .MuiBottomNavigationAction-label': {
-      color: '#fcd9b8',
-    },
+
+  const handleDrawerClick = (key: number) => {
+    setCurrentPage(key);
   };
 
   return (
     <div className="hub">
       <TimeBar />
-      <div className="overlay">{renderHub()}</div>
-      <BottomNavigation
+      <div style={{ display: 'flex' }}>
+        <div>
+          <Drawer
+            variant="permanent"
+            sx={{
+              width: drawerWidth,
+              flexShrink: 0,
+              [`& .MuiDrawer-paper`]: {
+                width: drawerWidth,
+                boxSizing: 'border-box',
+                backgroundColor: '#17181d',
+                color: globalColor.textColor,
+              },
+            }}
+          >
+            <List style={{ paddingTop: '60px' }}>
+              {allComponents.map((text, index) => (
+                <ListItem
+                  key={text}
+                  disablePadding
+                  style={{ paddingTop: '20px' }}
+                >
+                  <ListItemButton onClick={() => handleDrawerClick(index)}>
+                    <ListItemIcon>{renderIcon(text)}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Drawer>
+        </div>
+        <div
+          className="overlay"
+          style={{ overflow: 'hidden', overflowY: 'scroll' }}
+        >
+          {renderHub()}
+        </div>
+
+        {/* <BottomNavigation
         className="navigation"
         style={{ backgroundColor: '#17181d' }}
         value={currentPage}
@@ -90,7 +161,8 @@ const Hub = () => {
           icon={<Settings style={navIconStyle} />}
           sx={navIconOverride}
         />
-      </BottomNavigation>
+      </BottomNavigation> */}
+      </div>
     </div>
   );
 };

@@ -72,7 +72,7 @@ const LedgerBook = () => {
     }
     let total = 0;
     itemArray.forEach((item) => {
-      total += item.cost;
+      total += item.cost * item.quantity;
     });
     return total;
   };
