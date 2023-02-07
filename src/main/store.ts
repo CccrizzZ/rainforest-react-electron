@@ -10,7 +10,7 @@ import {
 } from 'electron-redux';
 
 const initialState = getInitialStateRenderer();
-// const todoApp = combineReducers(reducers)
+// const todoApp = combineReducers(reducers);
 
 // const store = createStore(
 //   todoApp,

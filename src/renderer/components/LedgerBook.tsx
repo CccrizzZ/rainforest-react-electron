@@ -40,7 +40,6 @@ const sales: Array<Item> = [
   },
 ];
 
-// let fadeIn = false;
 const LedgerBook = () => {
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [purchaseArr, setPurchaseArr] = useState([] as Array<Item>);
@@ -49,13 +48,6 @@ const LedgerBook = () => {
   useEffect(() => {
     setPurchaseArr(purchase);
     setSalesArr(sales);
-
-    // fade in
-    // setFadeIn(true);
-
-    return () => {
-      // setFadeIn(false);
-    };
   }, []);
 
   const addSalesItem = () => {

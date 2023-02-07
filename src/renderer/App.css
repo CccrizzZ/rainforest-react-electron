@@ -46,12 +46,6 @@ body {
   src: url('/assets/fonts/SF-Pro-Text-Light.otf');
 }
 
-.desktopApps {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
 .overlay {
   width: 100%;
   height: 100%;
@@ -75,12 +69,4 @@ body {
   bottom: 0;
   width: 100%;
   text-align: center;
-}
-
-.drawerButton {
-  width: 100px;
-}
-
-.drawerMenu {
-  width: 50%;
 }

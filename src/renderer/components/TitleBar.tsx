@@ -7,7 +7,7 @@ import { setInterval } from 'timers';
 import { globalColor } from '../style/GlobalStyle';
 import '../style/TimeBar.css';
 
-const TimeBar = () => {
+const TitleBar = () => {
   const [currentTime, setCurrentTime] = useState<Moment>(moment());
 
   useEffect(() => {
@@ -50,16 +50,17 @@ const TimeBar = () => {
         style={{
           backgroundColor: globalColor.barColor,
           padding: '10px',
+          height: '60px',
           color: globalColor.textColor,
         }}
       >
-        <div className="clock">
+        {/* <div className="clock">
           <h4>{currentTime.format('LT')}</h4>
           <h4>{currentTime.format('LL')}</h4>
-        </div>
+        </div> */}
       </AppBar>
     </div>
   );
 };
 
-export default TimeBar;
+export default TitleBar;

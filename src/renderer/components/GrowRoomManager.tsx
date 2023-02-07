@@ -20,7 +20,7 @@ import {
   SelectChangeEvent,
   Fade,
 } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Add, Refresh } from '@mui/icons-material';
 import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import moment from 'moment';
@@ -108,9 +108,6 @@ const radioLabel = {
   },
 };
 
-type DatabaseSelection = 'mongo' | 'json';
-const dbSelect: DatabaseSelection = 'mongo';
-
 const GrowRoomManager = (): JSX.Element => {
   const [jsonPath] = useState('./db.json');
   const [jsonConnector] = useState<JsonDBConnector>(
@@ -130,7 +127,7 @@ const GrowRoomManager = (): JSX.Element => {
 
   // edit popup
   const [showEditPlantPopup, setShowEditPlantPopup] = useState<boolean>(false);
-  const closeEditPlantPopup = () => setShowEditPlantPopup(false);
+  const closeEditPlantPopup = (): void => setShowEditPlantPopup(false);
   const openEditPlantPopup = (selectedPlant: Plant): void => {
     setShowEditPlantPopup(true);
     setCurrentPlant(selectedPlant);
@@ -139,42 +136,38 @@ const GrowRoomManager = (): JSX.Element => {
   useEffect(() => {
     // fetch all plant data
     const refreshPlant = (): void => {
-      if (dbSelect === 'mongo') {
-        MongoDBConnector.readPlantDB();
-      } else if (dbSelect === 'json') {
-        jsonConnector.readPlantDB();
-      }
+      MongoDBConnector.readPlantDB();
       closeAddPlantPopup();
     };
 
     const ipcR = window.electron.ipcRenderer;
 
     // json db operation
-    ipcR.on('readPlantJsonDB', (arg) => {
-      const db = JSON.parse(arg as string);
-      setAllBatches(db);
-    });
-    ipcR.on('appendPlantToJsonDB', (arg) => {
-      if (arg === 'cannot find file') {
-        alert('cannot find json.db');
-      } else {
-        refreshPlant();
-      }
-    });
-    ipcR.on('updatePlantToJsonDB', (arg) => {
-      if (arg === 'cannot find file') {
-        alert('cannot find json.db');
-      } else {
-        refreshPlant();
-      }
-    });
-    ipcR.on('deletePlantFromJsonDB', (arg) => {
-      if (arg === 'cannot find file') {
-        alert('cannot find json.db');
-      } else {
-        refreshPlant();
-      }
-    });
+    // ipcR.on('readPlantJsonDB', (arg) => {
+    //   const db = JSON.parse(arg as string);
+    //   setAllBatches(db);
+    // });
+    // ipcR.on('appendPlantToJsonDB', (arg) => {
+    //   if (arg === 'cannot find file') {
+    //     alert('cannot find json.db');
+    //   } else {
+    //     refreshPlant();
+    //   }
+    // });
+    // ipcR.on('updatePlantToJsonDB', (arg) => {
+    //   if (arg === 'cannot find file') {
+    //     alert('cannot find json.db');
+    //   } else {
+    //     refreshPlant();
+    //   }
+    // });
+    // ipcR.on('deletePlantFromJsonDB', (arg) => {
+    //   if (arg === 'cannot find file') {
+    //     alert('cannot find json.db');
+    //   } else {
+    //     refreshPlant();
+    //   }
+    // });
 
     // mongodb listenser
     ipcR.on('readPlantMongoDB', (arg) => {
@@ -195,11 +188,8 @@ const GrowRoomManager = (): JSX.Element => {
     });
 
     // read plants data from mongodb
-    MongoDBConnector.readPlantDB();
-
-    // read from json db
-    // jsonConnector.readPlantDB();
-  }, [jsonConnector]);
+    refreshPlant();
+  }, []);
 
   // gets all plats data at selected stage
   const getPlants = (
@@ -821,13 +811,27 @@ const GrowRoomManager = (): JSX.Element => {
   };
 
   const gridStyle = { margin: 'auto', marginTop: '0' };
-  return (
-    <Fade in>
-      <div className="growRoomManager unselectable componentWindow">
-        <div className="header" style={{ paddingTop: '30px' }}>
-          <EventCalender />
-          {renderAddPlantPopup()}
-          {renderEditPlantPopup()}
+  const matrixStyle = {
+    padding: '20px',
+    border: '1px solid black',
+    borderRadius: '1em',
+    backgroundColor: globalColor.moduleBGColor,
+    margin: '10px',
+  };
+  const growRoomMatrix = (): JSX.Element => {
+    return (
+      <div style={matrixStyle}>
+        <h1 style={{ display: 'table', margin: 'auto', marginTop: '10px' }}>
+          Grow Room Matrix
+        </h1>
+        <div
+          style={{
+            display: 'flex',
+            width: '50%',
+            margin: 'auto',
+            padding: '20px',
+          }}
+        >
           <Tooltip title="Add New Plant" disableInteractive placement="top">
             <Fab
               onClick={openAddPlantPopup}
@@ -841,26 +845,60 @@ const GrowRoomManager = (): JSX.Element => {
               <Add />
             </Fab>
           </Tooltip>
+          <Tooltip title="Refresh" disableInteractive placement="top">
+            <Fab
+              onClick={() => {
+                MongoDBConnector.readPlantDB();
+              }}
+              color="primary"
+              aria-label="refresh"
+              style={{
+                margin: 'auto',
+                display: 'flex',
+              }}
+            >
+              <Refresh />
+            </Fab>
+          </Tooltip>
         </div>
-        <div className="content">
-          <Grid container alignItems="stretch">
-            <Grid className="germinationCol slots" style={gridStyle}>
-              <h1>Germination</h1>
-              {getPlants(`germination`)}
-            </Grid>
-            <Grid className="vegetationCol slots" style={gridStyle}>
-              <h1>Vegetation</h1>
-              {getPlants(`vegetation`)}
-            </Grid>
-            <Grid className="floweringCol slots" style={gridStyle}>
-              <h1>Flowering</h1>
-              {getPlants(`flowering`)}
-            </Grid>
-            <Grid className="harvestedCol slots" style={gridStyle}>
-              <h1>Harvested</h1>
-              {getPlants(`harvested`)}
-            </Grid>
+        <Grid
+          container
+          alignItems="stretch"
+          style={{
+            backgroundColor: globalColor.lightDarkColor,
+            borderRadius: '1em',
+            padding: '10px',
+          }}
+        >
+          <Grid className="germinationCol slots" style={gridStyle}>
+            <h1>Germination</h1>
+            {getPlants(`germination`)}
           </Grid>
+          <Grid className="vegetationCol slots" style={gridStyle}>
+            <h1>Vegetation</h1>
+            {getPlants(`vegetation`)}
+          </Grid>
+          <Grid className="floweringCol slots" style={gridStyle}>
+            <h1>Flowering</h1>
+            {getPlants(`flowering`)}
+          </Grid>
+          <Grid className="harvestedCol slots" style={gridStyle}>
+            <h1>Harvested</h1>
+            {getPlants(`harvested`)}
+          </Grid>
+        </Grid>
+      </div>
+    );
+  };
+
+  return (
+    <Fade in>
+      <div className="growRoomManager unselectable componentWindow">
+        <div className="header" style={{ paddingTop: '30px' }}>
+          <EventCalender />
+          {renderAddPlantPopup()}
+          {renderEditPlantPopup()}
+          {growRoomMatrix()}
         </div>
       </div>
     </Fade>

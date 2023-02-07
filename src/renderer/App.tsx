@@ -19,7 +19,7 @@ import {
   Settings,
 } from '@mui/icons-material';
 import InventoryManager from './components/InventoryManager';
-import TimeBar from './components/TimeBar';
+import TitleBar from './components/TitleBar';
 import GrowRoomManager from './components/GrowRoomManager';
 import LedgerBook from './components/LedgerBook';
 import SettingsComponent from './components/SettingsComponent';
@@ -87,9 +87,15 @@ const Hub = () => {
     setCurrentPage(key);
   };
 
+  const contentBoxStyle = {
+    width: '100%',
+    height: '100%',
+    overflow: 'scroll',
+  };
+
   return (
     <div className="hub">
-      <TimeBar />
+      <TitleBar />
       <div style={{ display: 'flex' }}>
         <div>
           <Drawer
@@ -121,13 +127,7 @@ const Hub = () => {
             </List>
           </Drawer>
         </div>
-        <div
-          className="overlay"
-          style={{ overflow: 'hidden', overflowY: 'scroll' }}
-        >
-          {renderHub()}
-        </div>
-
+        <div style={contentBoxStyle}>{renderHub()}</div>
         {/* <BottomNavigation
         className="navigation"
         style={{ backgroundColor: '#17181d' }}
