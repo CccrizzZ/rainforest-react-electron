@@ -822,7 +822,7 @@ const GrowRoomManager = (): JSX.Element => {
     return (
       <div style={matrixStyle}>
         <h1 style={{ display: 'table', margin: 'auto', marginTop: '10px' }}>
-          Grow Room Matrix
+          All Cultivars
         </h1>
         <div
           style={{
@@ -895,7 +895,7 @@ const GrowRoomManager = (): JSX.Element => {
     <Fade in>
       <div className="growRoomManager unselectable componentWindow">
         <div className="header" style={{ paddingTop: '30px' }}>
-          <EventCalender />
+          {/* <EventCalender /> */}
           {renderAddPlantPopup()}
           {renderEditPlantPopup()}
           {growRoomMatrix()}

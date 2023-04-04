@@ -10,8 +10,6 @@ const serverIP = 'http://localhost:3000';
 const addJsonRW = () => {
   ipcMain.on('readPlantMongoDB', async (event: IpcMainEvent): Promise<void> => {
     const result = await axios.get(`${serverIP}/plants/all`);
-    console.log(result.data);
-
     event.reply('readPlantMongoDB', result.data);
   });
 
@@ -27,7 +25,6 @@ const addJsonRW = () => {
   ipcMain.on(
     'deletePlantMongoDB',
     async (event: IpcMainEvent, id: string): Promise<void> => {
-      console.log(`delete plant ${serverIP}/plants/${id}`);
       const result = await axios.delete(`${serverIP}/plants/${id}`);
       event.reply('deletePlantMongoDB', result.data);
     }

@@ -4,9 +4,11 @@
 
 ![Eslint](https://img.shields.io/badge/eslint-3A33D1?style=for-the-badge&logo=eslint&logoColor=white) ![MUI](https://img.shields.io/badge/Material%20UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
 
-# Rainforest
+# Rainforest Desktop V2
 
-Commercial grow house management system.
+Commercial grow house management system build with React.js and Electron.js
+
+<img src="./demoSc.png" alt="demo_screenshot"/>
 
 ## Applications
 
